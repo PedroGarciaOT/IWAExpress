@@ -1,0 +1,15 @@
+{
+  "App": {
+    "dbConfig": {
+      "host": "db",
+      "port": 3306,
+      "user": "iwa",
+      "password": "iwa",
+      "database": "iwa"
+    },
+    "apiConfig": {
+      "url": "https://iwaexpress.mfdemouk.com"
+    },
+    "encryptionKey": "lakdsljkalkjlksdfkl"
+  }
+}

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>IWAExpress</Name>
+    <RootNamespace>IWAExpress</RootNamespace>
+    <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>80b845f9-add2-48d5-bbb4-04b536a09273</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>app.js</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <NodejsPort>3000</NodejsPort>
+    <StartWebBrowser>True</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include=".dockerignore" />
+    <Content Include=".env" />
+    <Content Include=".github\workflows\ci-default.yml" />
+    <Content Include=".github\workflows\release.yml" />
+    <Content Include=".github\workflows\test.yml" />
+    <Content Include="app.js" />
+    <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
+    <Content Include="config\default.json" />
+    <Content Include="config\production.json" />
+    <Content Include="config\test.json" />
+    <Content Include="data\certbot\.do-not-delete" />
+    <Content Include="data\nginx\.do-not-delete" />
+    <Content Include="data\nginx\app.conf" />
+    <Content Include="data\nginx\app.conf.init" />
+    <Content Include="data\nginx\app.conf.prod" />
+    <Content Include="data\nginx\app.conf.test" />
+    <Content Include="docker-compose.yml" />
+    <Content Include="Dockerfile" />
+    <Content Include="etc\NodeIWA-dev-login.webmacro" />
+    <Content Include="etc\NodeIWA-dev-ScanSettings.xml" />
+    <Content Include="etc\sca-filter.txt" />
+    <Content Include="Jenkinsfile" />
+    <Content Include="lib\db.js" />
+    <Content Include="LICENSE" />
+    <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.eot" />
+    <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.svg" />
+    <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.ttf" />
+    <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.woff" />
+    <Content Include="public\assets\css\lib\icomoon\style.css" />
+    <Content Include="public\assets\css\lib\owl.carousel.min.css" />
+    <Content Include="public\assets\css\lib\owl.theme.default.min.css" />
+    <Content Include="public\assets\css\lib\star-rating-theme.min.css" />
+    <Content Include="public\assets\css\lib\star-rating.min.css" />
+    <Content Include="public\assets\css\site.css" />
+    <Content Include="public\assets\img\awaiting-image-sm.png" />
+    <Content Include="public\assets\img\awaiting-image.png" />
+    <Content Include="public\assets\img\bg_1.jpg" />
+    <Content Include="public\assets\img\bg_2.jpg" />
+    <Content Include="public\assets\img\favicon.ico" />
+    <Content Include="public\assets\img\favicon.png" />
+    <Content Include="public\assets\img\favicon_whitebg.png" />
+    <Content Include="public\assets\img\generic-product-1.jpg" />
+    <Content Include="public\assets\img\generic-product-10.jpg" />
+    <Content Include="public\assets\img\generic-product-11.jpg" />
+    <Content Include="public\assets\img\generic-product-12.jpg" />
+    <Content Include="public\assets\img\generic-product-2.jpg" />
+    <Content Include="public\assets\img\generic-product-3.jpg" />
+    <Content Include="public\assets\img\generic-product-4.jpg" />
+    <Content Include="public\assets\img\generic-product-5.jpg" />
+    <Content Include="public\assets\img\generic-product-6.jpg" />
+    <Content Include="public\assets\img\generic-product-7.jpg" />
+    <Content Include="public\assets\img\generic-product-8.jpg" />
+    <Content Include="public\assets\img\generic-product-9.jpg" />
+    <Content Include="public\assets\img\hero_1.jpg" />
+    <Content Include="public\assets\img\home_hero_1.jpg" />
+    <Content Include="public\assets\img\home_hero_1a.jpg" />
+    <Content Include="public\assets\img\loading.gif" />
+    <Content Include="public\assets\img\login_logo.png" />
+    <Content Include="public\assets\img\logo.png" />
+    <Content Include="public\assets\img\mf_logo.png" />
+    <Content Include="public\assets\img\mf_logomark.png" />
+    <Content Include="public\assets\img\person_1.jpg" />
+    <Content Include="public\assets\img\person_2.jpg" />
+    <Content Include="public\assets\img\person_3.jpg" />
+    <Content Include="public\assets\img\person_4.jpg" />
+    <Content Include="public\assets\img\person_5.jpg" />
+    <Content Include="public\assets\img\pexels-background-1.jpg" />
+    <Content Include="public\assets\img\pexels-photo-1.jpg" />
+    <Content Include="public\assets\img\pexels-photo-2.jpg" />
+    <Content Include="public\assets\img\pexels-photo-3.jpg" />
+    <Content Include="public\assets\img\pexels-photo-4.jpg" />
+    <Content Include="public\assets\img\pexels-photo-hero.jpg" />
+    <Content Include="public\assets\img\pexels-photo-large-1.jpg" />
+    <Content Include="public\assets\img\pexels-photo-large-2.jpg" />
+    <Content Include="public\assets\img\pexels-photo-large-3.jpg" />
+    <Content Include="public\assets\img\sale.png" />
+    <Content Include="public\assets\js\components\NewProducts.js" />
+    <Content Include="public\assets\js\components\SubscribeNewsletter.js" />
+    <Content Include="public\assets\js\lib\owl.carousel.min.js" />
+    <Content Include="public\assets\js\lib\popper.min.js" />
+    <Content Include="public\assets\js\lib\star-rating-theme.min.js" />
+    <Content Include="public\assets\js\lib\star-rating.min.js" />
+    <Content Include="public\assets\js\site.js" />
+    <Content Include="public\favicon.ico" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".github\" />
+    <Folder Include=".github\workflows\" />
+    <Folder Include="bin\" />
+    <Folder Include="config\" />
+    <Folder Include="data\" />
+    <Folder Include="data\certbot\" />
+    <Folder Include="data\certbot\conf\" />
+    <Folder Include="data\certbot\www\" />
+    <Folder Include="data\nginx\" />
+    <Folder Include="etc\" />
+    <Folder Include="lib\" />
+    <Folder Include="public\" />
+    <Folder Include="public\assets\" />
+    <Folder Include="public\assets\css\" />
+    <Folder Include="public\assets\css\lib\" />
+    <Folder Include="public\assets\css\lib\icomoon\" />
+    <Folder Include="public\assets\css\lib\icomoon\fonts\" />
+    <Folder Include="public\assets\img\" />
+    <Folder Include="public\assets\js\" />
+    <Folder Include="public\assets\js\components\" />
+    <Folder Include="public\assets\js\lib\" />
+    <Folder Include="routes\" />
+    <Folder Include="sql\" />
+    <Folder Include="ssc\" />
+    <Folder Include="tests\" />
+    <Folder Include="views\" />
+    <Folder Include="views\cart\" />
+    <Folder Include="views\include\" />
+    <Folder Include="views\product\" />
+    <Folder Include="views\user\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="routes\api.js" />
+    <Content Include="routes\cart.js" />
+    <Content Include="routes\default.js" />
+    <Content Include="routes\product.js" />
+    <Content Include="routes\user.js" />
+    <Content Include="sonar-project.properties" />
+    <Content Include="sql\data.sql" />
+    <Content Include="sql\dbCreate.js" />
+    <Content Include="sql\schema.sql" />
+    <Content Include="ssc\config.js" />
+    <Content Include="ssc\main.js" />
+    <Content Include="ssc\restClient.js" />
+    <Content Include="tests\api.js" />
+    <Content Include="views\advice.ejs" />
+    <Content Include="views\cart\index.ejs" />
+    <Content Include="views\error.ejs" />
+    <Content Include="views\home.ejs" />
+    <Content Include="views\include\advert.ejs" />
+    <Content Include="views\include\footer.ejs" />
+    <Content Include="views\include\head.ejs" />
+    <Content Include="views\include\messages.ejs" />
+    <Content Include="views\include\navbar.ejs" />
+    <Content Include="views\include\scripts.ejs" />
+    <Content Include="views\login.ejs" />
+    <Content Include="views\prescriptions.ejs" />
+    <Content Include="views\product\index.ejs" />
+    <Content Include="views\product\view.ejs" />
+    <Content Include="views\services.ejs" />
+    <Content Include="views\user\index.ejs" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config" />
+  </ItemGroup>
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,15 @@
+{
+  "App": {
+    "dbConfig": {
+      "host": "db",
+      "port": 3306,
+      "user": "iwa",
+      "password": "iwa",
+      "database": "iwa"
+    },
+    "apiConfig": {
+      "url": "https://localhost:3000"
+    },
+    "encryptionKey": "lakdsljkalkjlksdfkl"
+  }
+}

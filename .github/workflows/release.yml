@@ -1,0 +1,56 @@
+# Production Release workflow
+
+name: Release
+
+# Controls when the action will run. 
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # "build"
+  build-and-run:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Ensure all files are owned by actions-runner
+      - name: chown
+        run: |
+          sudo chown -R $USER:$USER /opt/actions-runner/_work/NodeIWA
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      # Setup required Node.js environment
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.x
+
+      # Run npm install, build and test
+      - name: npm install, build, and test
+        run: |
+          npm install
+          MOCHA_FILE=./github-test-results.xml ./node_modules/.bin/mocha tests/** --reporter mocha-junit-reporter
+          
+      # make sure all containers are down
+      - name: docker-compose down
+        run: |
+          docker-compose --profile production down
+
+      # initialise nginx
+      - name: nginx init
+        run: |          
+          cp -f data/nginx/app.conf.init data/nginx/app.conf
+          bin/init-letsencrypt.sh
+          cp -f data/nginx/app.conf.prod data/nginx/app.conf
+          sudo chown -R $USER:$USER /opt/actions-runner/_work/NodeIWA
+          
+      # bring up all containers    
+      - name: docker-compose up
+        run: |
+          docker-compose --profile production up -d --build
+  

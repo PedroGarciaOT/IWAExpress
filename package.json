@@ -1,0 +1,60 @@
+{
+  "name": "iwaexpress",
+  "version": "0.0.0",
+  "description": "IWAExpress (Insecure Web App) Pharmacy Direct an insecure NodeJS/Express web application for use in Micro Focus demonstrations",
+  "main": "app.js",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon app.js",
+    "test": "mocha --reporter spec",
+    "createVersion": "node -r esm ssc/main.js createVersion --verName \"dev-branch\" --appName \"IWAExpress\"",
+    "copyVersion": "node -r esm ssc/main.js copyVersion --verName \"example-2\" --appName \"IWAExpress\" --copyFrom \"master\""
+  },
+  "author": {
+    "name": "Kevin Lee <kevin.lee@microfocus.com>"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "async": "~0.2.8",
+    "body-parser": "^1.18.2",
+    "bootstrap": "^4.6.0",
+    "chai": "^4.3.4",
+    "child_process": "^1.0.2",
+    "config": "^3.3.6",
+    "cookie-parser": "^1.4.5",
+    "crypto": "^1.0.1",
+    "debug": "^2.2.0",
+    "dotenv": "^8.5.1",
+    "ejs": "^2.7.4",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-session": "^1.17.1",
+    "express-validator": "^6.10.0",
+    "fs": "0.0.1-security",
+    "http-errors": "^1.8.0",
+    "image-file-resize": "^1.0.3",
+    "jquery": "^3.6.0",
+    "mocha": "^8.3.2",
+    "morgan": "^1.10.0",
+    "mysql": "^2.13.0",
+    "pug": "^2.0.0-beta6",
+    "readline": "^1.3.0",
+    "request": "^2.88.2",
+    "restify": "^6.0.1",
+    "serve-favicon": "^2.3.0",
+    "socket.io": "~0.9.14",
+    "swagger-client": "^3.13.2",
+    "test": "^0.6.0",
+    "yargs": "^17.0.1"
+  },
+  "devDependencies": {
+    "mocha-junit-reporter": "^2.0.0",
+    "nodemon": "^1.19.4",
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0"
+  },
+  "engines": {
+    "node": "~14.15.x"
+  }
+}
