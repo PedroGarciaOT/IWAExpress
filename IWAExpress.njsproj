@@ -32,10 +32,16 @@
   <ItemGroup>
     <Content Include=".dockerignore" />
     <Content Include=".env" />
-    <Content Include=".github\workflows\ci-default.yml" />
+    <Content Include=".github\workflows\continuous-inspection.yml" />
+    <Content Include=".github\workflows\fortify-results-importer.yml" />
+    <Content Include=".github\workflows\fortify-analysis.yml" />
     <Content Include=".github\workflows\release.yml" />
     <Content Include=".github\workflows\test.yml" />
     <Content Include="app.js" />
+    <Content Include="bin\cleanup.ps1" />
+    <Content Include="bin\fortify-sca.ps1" />
+    <Content Include="bin\modules\FortifyFunctions.psm1" />
+    <Content Include="bin\init-letsencrypt.sh" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
     <Content Include="config\default.json" />
     <Content Include="config\production.json" />
@@ -121,6 +127,7 @@
     <Folder Include=".github\" />
     <Folder Include=".github\workflows\" />
     <Folder Include="bin\" />
+    <Folder Include="bin\modules\" />
     <Folder Include="config\" />
     <Folder Include="data\" />
     <Folder Include="data\certbot\" />
