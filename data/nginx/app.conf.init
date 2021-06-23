@@ -18,7 +18,6 @@ server {
 
     location / {
        proxy_pass http://iwaexpress.mfdemouk.com;
-       proxy_pass http://iwaexpress.mfdemouk.com;
     }
 
 }
