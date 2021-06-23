@@ -43,6 +43,7 @@
     <Content Include="bin\modules\FortifyFunctions.psm1" />
     <Content Include="bin\init-letsencrypt.sh" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
+    <Content Include="bin\release.sh" />
     <Content Include="config\default.json" />
     <Content Include="config\production.json" />
     <Content Include="config\test.json" />

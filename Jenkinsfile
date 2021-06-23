@@ -20,9 +20,9 @@ pipeline {
 
     environment {
         // Application settings
-        APP_NAME = "IWAExpress"                                // Application name
+        APP_NAME = "IWAExpress"                             // Application name
         APP_VER = "master"                                  // Application release - GitHub master branch
-        COMPONENT_NAME = "IWAExpress"                          // Component name
+        COMPONENT_NAME = "IWAExpress"                       // Component name
         GIT_URL = scm.getUserRemoteConfigs()[0].getUrl()    // Git Repo
         ISSUE_IDS = ""                                      // List of issues found from commit
 
