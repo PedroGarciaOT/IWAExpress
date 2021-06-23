@@ -6,19 +6,19 @@ name: Continuous Inspection
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   # Uncomment the below for CI style build - otherwise Action can only be run manually from GitHUb
-  #push:
-  #  paths-ignore:
-  #  - .github/workflows/**
-  #  - 'bin/**'
-  #  - 'data/**'
-  #  - 'etc/**'
-  #  - 'media/**'
-  #  - 'Jenkinsfile'
-  #  - '.gitlab-ci.yml'
-  #  - 'README.md'
-  #  branches: [ master ]
-  #pull_request:
-  #  branches: [ master ]
+  push:
+    paths-ignore:
+    - .github/workflows/**
+    - 'bin/**'
+    - 'data/**'
+    - 'etc/**'
+    - 'media/**'
+    - 'Jenkinsfile'
+    - '.gitlab-ci.yml'
+    - 'README.md'
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

@@ -6,11 +6,11 @@
 Import-Module $PSScriptRoot\modules\FortifyFunctions.psm1
 
 $AppName = "IWAExpress"
+$AppVersion = "master"
 $UploadToSSC = $True							# Upload issues to SSC by default
 $SSCUrl = $Env:SSC_URL							# Get SSC URL from environment variable "SSC_URL"
 $SSCAuthToken = $Env:SSC_AUTH_TOKEN				# SSC AnalysisUploadToken token from environment variable "SSC_AUTH_TOKEN"
-$SSCAppVersionId = 10017						# Change this to your Application Version Id in SSC
-												# Can be retrieved using: fortifyclient listApplicationVersions -url $SSCUrl -user [your-username] -password [your-password]
+												# Can be created using: fortifyclient token -gettoken AnalysisUploadToken  -url $SSCUrl -user [your-username] -password [your-password]
 
 $ScanSwitches = "-Dcom.fortify.sca.Phase0HigherOrder.Languages=javascript,typescript -Dcom.fortify.sca.EnableDOMModeling=true"
 
@@ -35,7 +35,7 @@ Write-Host Generating PDF report...
 
 if ($UploadToSSC -eq $True) {
 	Write-Host Uploading results to SSC...
-	& fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -applicationVersionID $SSCAppVersionId
+	& fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
 }
 
 Write-Host Done.
