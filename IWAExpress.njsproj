@@ -33,8 +33,7 @@
     <Content Include=".dockerignore" />
     <Content Include=".env" />
     <Content Include=".github\workflows\continuous-inspection.yml" />
-    <Content Include=".github\workflows\fortify-results-importer.yml" />
-    <Content Include=".github\workflows\fortify-analysis.yml" />
+    <Content Include=".github\workflows\FOD-results-importer.yml" />
     <Content Include=".github\workflows\release.yml" />
     <Content Include=".github\workflows\test.yml" />
     <Content Include="app.js" />
@@ -61,6 +60,9 @@
     <Content Include="Jenkinsfile" />
     <Content Include="lib\db.js" />
     <Content Include="LICENSE" />
+    <Content Include="middleware\cors-handler.js" />
+    <Content Include="middleware\basic-auth-handler.js" />
+    <Content Include="middleware\error-handler.js" />
     <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.eot" />
     <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.svg" />
     <Content Include="public\assets\css\lib\icomoon\fonts\icomoon.ttf" />
@@ -137,6 +139,8 @@
     <Folder Include="data\nginx\" />
     <Folder Include="etc\" />
     <Folder Include="lib\" />
+    <Folder Include="middleware\" />
+    <Folder Include="services\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="public\assets\css\" />
@@ -148,21 +152,26 @@
     <Folder Include="public\assets\js\components\" />
     <Folder Include="public\assets\js\lib\" />
     <Folder Include="routes\" />
+    <Folder Include="routes\api\" />
     <Folder Include="sql\" />
     <Folder Include="ssc\" />
     <Folder Include="tests\" />
     <Folder Include="views\" />
     <Folder Include="views\cart\" />
     <Folder Include="views\include\" />
-    <Folder Include="views\product\" />
-    <Folder Include="views\user\" />
+    <Folder Include="views\products\" />
+    <Folder Include="views\users\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="routes\api.js" />
+    <Content Include="routes\api\cart.js" />
+    <Content Include="routes\api\site.js" />
+    <Content Include="routes\api\users.js" />
+    <Content Include="routes\api\products.js" />
     <Content Include="routes\cart.js" />
     <Content Include="routes\default.js" />
-    <Content Include="routes\product.js" />
-    <Content Include="routes\user.js" />
+    <Content Include="routes\products.js" />
+    <Content Include="routes\users.js" />
+    <Content Include="services\users-service.js" />
     <Content Include="sonar-project.properties" />
     <Content Include="sql\data.sql" />
     <Content Include="sql\dbCreate.js" />
@@ -183,10 +192,10 @@
     <Content Include="views\include\scripts.ejs" />
     <Content Include="views\login.ejs" />
     <Content Include="views\prescriptions.ejs" />
-    <Content Include="views\product\index.ejs" />
-    <Content Include="views\product\view.ejs" />
+    <Content Include="views\products\index.ejs" />
+    <Content Include="views\products\view.ejs" />
     <Content Include="views\services.ejs" />
-    <Content Include="views\user\index.ejs" />
+    <Content Include="views\users\index.ejs" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config" />
   </ItemGroup>

@@ -1,19 +1,16 @@
 const { request } = require('express');
 const express = require('express');
 const router = express.Router();
-const exec = require('child_process').exec;
-const fs = require('fs');
-const convert = require('image-file-resize');
-const mysql = require('mysql');
-const connection  = require('../lib/db');
+const connection = require('../lib/db');
+const config = require('config');
 
-const APP_TITLE = "IWAExpress"
+const appConf = config.get('App');
 
 // login request
 router.get('/login', (request, response) => {
     console.log(`INFO: Request for login received`);
     response.render('login', { 
-        title: APP_TITLE + " :: Login",
+        title: appConf.name + " :: Login",
         email: '',
         password: ''
     })
@@ -29,10 +26,11 @@ router.get('/logout', (request, response) => {
 
 
 // login authorisation request
-router.post('/auth', function(request, response) {
+router.post('/auth', function (request, response) {
+    var username = request.body.username
 	var email = request.body.email;
 	var password = request.body.password;
-	if (email && password) {
+    if (email && password) {
 		connection.query('SELECT * FROM accounts WHERE email = "' + request.body.email + '" AND password = "' + request.body.password + '"', function(error, results, fields) {
             if (!results) {
                 request.flash('error', 'Database cannot be read - has it been initialized');
@@ -61,11 +59,11 @@ router.get('/', (request, response) => {
     console.log(`INFO: Request for / received`);
     if (request.session.loggedin) {
         response.render('home', {
-            title: APP_TITLE + " :: Home"
+            title: appConf.name + " :: Home"
         });
     } else {
         response.render('home', {
-            title: APP_TITLE + " :: Home"
+            title: appConf.name + " :: Home"
         });
     }
 });
@@ -73,21 +71,21 @@ router.get('/', (request, response) => {
 // prescriptions
 router.get('/prescriptions', function (request, response) {
     response.render('prescriptions', {
-        title: APP_TITLE + " :: Prescriptions"
+        title: appConf.name + " :: Prescriptions"
     });
 });
 
 // services
 router.get('/services', function (request, response) {
     response.render('services', {
-        title: APP_TITLE + " :: Services"
+        title: appConf.name + " :: Services"
     });
 });
 
 // advice
 router.get('/advice', function (request, response) {
     response.render('advice', {
-        title: APP_TITLE + " :: Advice"
+        title: appConf.name + " :: Advice"
     });
 });
 

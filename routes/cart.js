@@ -1,15 +1,14 @@
 const { request } = require('express');
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql');
-const connection  = require('../lib/db');
+const config = require('config');
 
-const APP_TITLE = "IWAExpress"
+const appConf = config.get('App');
 
 // shopping cart
 router.get('/', function(request, response) {
     response.render('cart/index', {
-        title: APP_TITLE + " :: Cart"
+        title: appConf.name + " :: Cart"
     });
 });
 

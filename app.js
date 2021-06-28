@@ -1,8 +1,5 @@
 'use strict';
 
-const APP_PORT = 3000;
-const APP_TITLE = "ExpressIWA";
-
 const express = require("express");
 const config = require('config');
 const router = express.Router();
@@ -12,10 +9,17 @@ const cookieParser = require('cookie-parser');
 const flash = require('express-flash');
 const path = require('path');
 const logger = require('morgan');
-const createError = require('http-errors')
+const createError = require('http-errors');
 const debug = require('debug');
+const cors = require('cors');
 const favicon = require('serve-favicon');
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 
+const errorHandler = require('./middleware/error-handler');
+const basicAuthHandler = require("./middleware/basic-auth-handler");
+
+//const cors = require("./middleware/authCors");
 
 // any command line args
 var myArgs = process.argv.slice(2);
@@ -42,10 +46,14 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(flash());
+
+// use basic authentication handler for API authorisation
+app.use(basicAuthHandler);
 
 // use ejs templates in "views" subdirectory
 app.set('views', path.join(__dirname, 'views'));
@@ -69,10 +77,70 @@ app.use(function (req, res, next) {
 
 // application routes
 app.use('/', require('./routes/default'));
-app.use('/product', require('./routes/product'));
-app.use('/user', require('./routes/user'));
+app.use('/products', require('./routes/products'));
+app.use('/users', require('./routes/users'));
 app.use('/cart', require('./routes/cart'));
-app.use('/api', require('./routes/api'));
+
+// Swagger API Configuration  
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: "3.0.0",
+        info: {
+            title: 'IWAExpress API',
+            version: '1.0.0',
+            description:
+                "This is the API for IWAExpress (Insecure Web App) Pharmacy Direct an insecure NodeJS/Express web application documented with Swagger",
+            license: {
+                name: "GPLv3",
+                url: "https://www.gnu.org/licenses/gpl-3.0.en.html",
+            },
+            contact: {
+                name: "Micro Focus",
+                url: "https://microfocus.com",
+                email: "info@microfocus.com",
+            }
+        },
+        components: {
+            securitySchemes: {
+                basicAuth: {
+                    type: 'http',
+                    scheme: 'basic',
+                    description: 'Basic Authorization header.',
+                },
+            },
+        },
+        security: [
+            {
+                basicAuth: [],
+            },
+        ],
+        servers: [
+            {
+                url: "https://iwaexpress.mfdemouk.com/api",
+                description: 'Production instance'
+            },
+            {
+                url: "http://localhost:3000/api",
+                description: 'Development server'
+            },
+        ],
+    },
+    apis: ['./routes/api/*.js'],
+    securityDefinitions: {
+        auth: {
+            type: 'basic',
+        },
+    },
+    security: [{ auth: [] }],
+}
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+// application api routes
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs, { explorer: true }));
+app.use('/api/site', require('./routes/api/site'));
+app.use('/api/products', require('./routes/api/products'));
+app.use('/api/users', require('./routes/api/users'));
+app.use('/api/cart', require('./routes/api/cart'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -89,12 +157,12 @@ app.use(function (err, req, res, next) {
     // render the error page
     res.status(err.status || 500);
     res.render('error', {
-        title: APP_TITLE + " :: Error"
+        title: appConf.title + " :: Error"
     });
 });
 
-app.listen(APP_PORT, () =>
-    console.log(`Express server listening on port ${APP_PORT}`)
+app.listen(appConf.port, () =>
+    console.log(`Express server listening on port ${appConf.port}`)
 );
 
 module.exports = app;

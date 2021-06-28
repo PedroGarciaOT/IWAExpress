@@ -23,10 +23,10 @@ $.fn.NewProducts = function (options) {
         return (
             "<div class='col-sm-6 col-lg-4 text-center item mb-4'>" +
                 (product.onSale ? "<span class='tag'>Sale</span>" : "") +
-                "<a href='/product/" + product.uuid + "'>" +
+                "<a href='/products/" + product.id + "'>" +
                     (product.image ? "<img src='/assets/img/" + product.image + "' alt='Image' class='img-fluid'" : "<img src='/assets/img/awaiting-image-sm.png' alt='Image' class='img-fluid'>") +
                 "</a>" +
-                "<h3 class='text - dark'><a href='/product/" + product.uuid + "'>" + product.name + "</a></h3>" +
+                "<h3 class='text - dark'><a href='/products/" + product.id + "'>" + product.name + "</a></h3>" +
                 (product.onSale ? "<p class='price'><del>&#164;" + product.price + "</del> &mdash; &#164;" + product.salePrice + "</p>" : "<p class='price'>&#164;" + product.price + "</p>") +
             "</div>"
         );

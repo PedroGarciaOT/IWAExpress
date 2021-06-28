@@ -1,17 +1,17 @@
 const { request } = require('express');
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql');
 const connection  = require('../lib/db');
+const config = require('config');
 
-const APP_TITLE = "IWAExpress"
+const appConf = config.get('App');
 
 // product home
 router.get('/', function (request, response) {
 
     console.log(`INFO: Request for /product received`);
-    response.render('product/index', {
-        title: APP_TITLE + " :: Products"
+    response.render('products/index', {
+        title: appConf.name + " :: Products"
     });
 
 });
@@ -40,8 +40,8 @@ router.get('/:pid', function (request, response) {
     connection.query("SELECT BIN_TO_UUID(id) AS uuid, code, name, image, summary, description, price, rating, on_sale as onSale, sale_price as salePrice, in_stock as inStock, time_to_stock as timeToStock " + 
         "FROM products WHERE id = UUID_TO_BIN('" + productId + "')", function (error, results, fields) {
             if (results != undefined && results.length > 0) {
-                response.render('product/view', { 
-                    title: APP_TITLE + " :: Product",
+                response.render('products/view', { 
+                    title: appConf.name + " :: Product",
                     product: results[0]
                 });
             } else {
@@ -51,5 +51,25 @@ router.get('/:pid', function (request, response) {
     });
    
 });
+
+var typeCastManager = {
+    typeCast: function castField(field, useDefaultTypeCasting) {
+
+        // We only want to cast bit fields that have a single-bit in them. If the field
+        // has more than one bit, then we cannot assume it is supposed to be a Boolean.
+        if ((field.type === "BIT") && (field.length === 1)) {
+
+            var bytes = field.buffer();
+
+            // A Buffer in Node represents a collection of 8-bit unsigned integers.
+            // Therefore, our single "bit field" comes back as the bits '0000 0001',
+            // which is equivalent to the number 1.
+            return (bytes[0] === 1);
+
+        }
+
+        return (useDefaultTypeCasting());
+    }
+};
 
 module.exports = router;

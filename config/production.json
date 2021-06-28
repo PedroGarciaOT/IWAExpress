@@ -8,7 +8,7 @@
       "database": "iwa"
     },
     "apiConfig": {
-      "url": "https://iwaexpress.mfdemouk.com"
+      "url": "https://iwaexpress.mfdemouk.com/api-docs/"
     },
     "encryptionKey": "lakdsljkalkjlksdfkl"
   }

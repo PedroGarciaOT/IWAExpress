@@ -1,5 +1,8 @@
 {
   "App": {
+    "name": "IWAExpress",
+    "description": "",
+    "port":  3000,
     "dbConfig": {
       "host": "localhost",
       "port": 3306,
@@ -8,7 +11,7 @@
       "database": "iwa"
     },
     "apiConfig": {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000/api-docs/"
     },
     "encryptionKey": "lakdsljkalkjlksdfkl"
   }

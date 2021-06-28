@@ -1,4 +1,10 @@
-$(document).ready(function() {
+$(document).ready(function () {
+    var keywords = GetURLParameter("keywords");
+    console.log("keywords = " + keywords);
+    if (keywords) {
+        $("#keywords").val(keywords);
+        //$("#search").submit();
+    }
     $("#search").submit(function(event) {
         event.preventDefault();
         const keywords = $("#keywords").val();
@@ -11,7 +17,7 @@ $(document).ready(function() {
                     $('#data').append(
                         "<div class='row p-4'>" +
                             "<div class='col-2'><img class='img-thumbnail' width='100px' src='/assets/img/" + row.image + "'></img></div>" +
-                            "<div class='col-2'><a href='/product/" + row.uuid + "'>" + row.name + "</a></div>" +
+                            "<div class='col-2'><a href='/products/" + row.id + "'>" + row.name + "</a></div>" +
                             "<div class='col-4'>" + row.summary.substring(0, 40) + "&hellip;</div>" +
                             "<div class='col-1'>£" + row.price + "</div>" +
                             "<div class='col-2'><input id='input-'" + i + " type='number' name='input-'" + i + " value='" + row.rating + "'></div>" +
@@ -192,6 +198,17 @@ $(document).ready(function() {
         });
     };
     slider();
+
+    function GetURLParameter(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam) {
+                return sParameterName[1];
+            }
+        }
+    }
 
 });
 
