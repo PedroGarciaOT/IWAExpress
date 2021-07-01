@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+
+<% include ./include/head.html %>
+
+<body class="background">
+
+    <div class="d-flex flex-column min-vh-100 site-wrap">
+
+        <% include ./include/navbar.html %>
+
+        <div class="site-section">
+            <div class="container h-100">
+
+                <div class="row align-items-center">
+                    <img src="/assets/img/login_logo.png" class="rounded mx-auto d-block" style="padding-top:20px;" alt="IWA Pharmacy Direct">
+                </div>
+
+                <div class="row justify-content-center align-items-center">
+
+                    <form class="form-login" action="/auth" method="post">
+                        <div class="invisible">Site message</div>
+                        <h1 class="h3 mb-3 font-weight-normal">Enter your details</h1>
+
+                        <% if (messages) { %>
+                        <div class="d-flex justify-content-center">
+                            <% if (messages.error) { %>
+                            <div class="alert alert-danger" role="alert"><%- messages.error %></div>
+                            <% } %>
+                            <% if (messages.success) { %>
+                            <div class="alert alert-success" role="alert"><%- messages.success %></div>
+                            <% } %>
+                        </div>
+                        <% } %>
+
+                        <div class="form-group">
+                            <input type="text" id="email" name="email" class="form-control" required
+                                   autofocus placeholder="Email address">
+                        </div>
+                        <div class="form-group mb-0">
+                            <input type="password" id="password" name="password" class="form-control" autocomplete="off"
+                                   placeholder="Password" required>
+                        </div>
+
+                        <!--div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" id="remember-me" name="remember-me"
+                                        value="remember-me"> Remember me
+                            </label>
+                        </div-->
+                        <button class="btn btn-lg btn-primary btn-block" name="login-submit" id="login-submit" type="submit">Login</button>
+                        <input type="hidden" value="<%http://localhost/%>" id="referer" name="referer" />
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <% include ./include/footer.html %>
+
+    </div>
+
+    <% include ./include/scripts.html %>
+
+</body>
+
+</html>

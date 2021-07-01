@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
 
-<% include ./include/head %>
+<% include ./include/head.html %>
 
 <body>
 
-    <% include ./include/navbar %>
+    <% include ./include/navbar.html %>
 
     <div class="d-flex flex-column min-vh-100 site-wrap">
 
@@ -19,7 +19,7 @@
                         </div>
                         <div class="jumbotron text-center" style="opacity: 0.9">
 
-                            <% include ./include/messages %>
+                            <% include ./include/messages.html %>
 
                             <% if( typeof(username) !== 'undefined' ) { %>
                             <h4>Hello <%=username%>!</h4>
@@ -166,13 +166,13 @@
             </div>
         </div>
 
-        <% include ./include/advert %>
+        <% include ./include/advert.html %>
 
     </div>
 
-    <% include ./include/footer %>
+    <% include ./include/footer.html %>
 
-    <% include ./include/scripts %>
+    <% include ./include/scripts.html %>
 
     <script src="/assets/js/components/NewProducts.js"></script>
     <script type="text/javascript">

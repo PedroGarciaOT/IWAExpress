@@ -5,10 +5,10 @@ const config = require('config');
 
 const appConf = config.get('App');
 
-// user home
+// user accouunt
 router.get('/', function(request, response) {
-    response.render('users/index', {
-        title: appConf.name + " :: User"
+    response.render('account/index', {
+        title: appConf.name + " :: Account"
     });
 });
 

@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
 
-<% include ../include/head %>
+<% include ../include/head.html %>
 
 <body>
 
-<% include ../include/navbar %>
+<% include ../include/navbar.html %>
 
 <div class="d-flex flex-column min-vh-100 site-wrap">
 
@@ -13,15 +13,15 @@
         <div class="container">
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2">Profile</h1>
+                <h1 class="h2">Account</h1>
             </div>
 
             <div class=row justify-content-center pt-4>    
-                <% include ../include/messages %>
+                <% include ../include/messages.html %>
             </div>
 
             <div>
-                <p class="lead mb-5">Your profile.</p>
+                <p class="lead mb-5">Your account.</p>
                 <p>
                     <button type="submit" class="btn btn-md height-auto px-4 py-3 btn-primary" onclick="window.history.go(-1);">Back</button>
                 </p>
@@ -32,9 +32,9 @@
 
 </div>
 
-<% include ../include/footer %>
+<% include ../include/footer.html %>
     
-<% include ../include/scripts %>
+<% include ../include/scripts.html %>
 
 
 </body>

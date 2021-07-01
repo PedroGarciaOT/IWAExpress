@@ -57,7 +57,9 @@ app.use(basicAuthHandler);
 
 // use ejs templates in "views" subdirectory
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');
+//app.set('view engine', 'ejs');
 
 // default app configuration
 const appConf = config.get('App');
@@ -78,7 +80,7 @@ app.use(function (req, res, next) {
 // application routes
 app.use('/', require('./routes/default'));
 app.use('/products', require('./routes/products'));
-app.use('/users', require('./routes/users'));
+app.use('/account', require('./routes/account'));
 app.use('/cart', require('./routes/cart'));
 
 // Swagger API Configuration  
