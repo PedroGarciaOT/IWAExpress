@@ -19,8 +19,8 @@ on:
     - 'LICENSE'
     branches:
     - '**'        # matches every branch
-  #pull_request:
-  #  branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -65,12 +65,17 @@ jobs:
             java-version: 1.8
 
       # Get the branch name
+      # TODO: Needs to be made to work for pull request
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
-         # And run script to check if it exists in FOD
+      # Verify if FoD release with name matching branch name exists and if not create it
+      # TODO: Update ENV variables for your application and create the necessary GitHub Secrets.  Helpful hints:
+      #   Credentials should be obtained from your FoD tenant (only API Key can is used here but could be changed to Personal Access Token).
+      #   FOD_PARENT_RELEASE_ID is the FoD release id corresponding to the parent branch of any newly created branch, this is typically "master" or "main"
+      # The PowerShellForFOD module is used to carry out the automation (see: https://github.com/fortify-community-plugins/PowerShellForFOD)
       - name: Verify FOD Release
         shell: pwsh
         run: |
@@ -89,7 +94,7 @@ jobs:
               $RelResponse = Add-FODRelease -Release $NewReleaseObj
               $ReleaseId = $RelResponse.releaseId
               Write-Output "::set-output name=FOD_RELEASE_ID::$ReleaseId"
-              Start-Sleep -Seconds 60
+              Start-Sleep -Seconds 30 # Brief pause to make sure release has been created!
           } else {
               Write-Output "Release exists..."
               $ReleaseId = Get-FODReleaseId -ApplicationName $Env:FOD_APPLICATION_NAME -ReleaseName $Env:GITHUB_BRANCH_NAME
@@ -188,7 +193,7 @@ jobs:
           Write-Output "High Issues:      $IssueCountHigh"
           Write-Output "Medium Issues:    $IssueCountMedium"
           Write-Output "Low Issues:       $IssueCountLow"
-          Write-Output "Total Issues:     $IssueCountTotal"
+          Write-Output "Total Issues:     $TotalIssues"
           # Example of using issue data
           #if ($StarRating -lt 2) { exit 1 } # Fail if less than 2 star rating - set to your own criteria
         env:
