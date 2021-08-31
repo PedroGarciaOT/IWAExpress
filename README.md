@@ -69,7 +69,7 @@ npm install -g nodemon
 Now you can create and populate a development database using:
 
 ```
-node .\sql\dbCreate.js
+node .\src\sql\dbCreate.js
 ```
 
 Finally you can start the application using:

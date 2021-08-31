@@ -5,7 +5,6 @@ name: Continuous Inspection
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
-  # Uncomment the below for CI style build - otherwise Action can only be run manually from GitHUb
   push:
     paths-ignore:
     - .github/workflows/**
@@ -46,7 +45,7 @@ jobs:
       - name: npm install, build, and test
         run: |
           npm install
-          MOCHA_FILE=./github-test-results.xml ./node_modules/.bin/mocha tests/** --reporter mocha-junit-reporter
+          MOCHA_FILE=./github-test-results.xml ./node_modules/.bin/mocha src/tests/** --reporter mocha-junit-reporter
 
   FoD-SAST-Scan:
     # Use the appropriate runner for building your source code.
@@ -64,11 +63,21 @@ jobs:
         with:
             java-version: 1.8
 
-      # Get the branch name
-      # TODO: Needs to be made to work for pull request
+      # Get the branch name or pr number
       - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        shell: pwsh
+        run: |
+          if ("$Env:GITHUB_REF" -clike 'refs/pull/*') {
+            $BranchName = $Env:GITHUB_REF -replace 'refs/pull/', ''
+            $PRNumber = $BranchName -replace '/merge', ''
+            $BranchName = "[PR]" + $Env:SOURCE_BRANCH + "#" + $PRNumber
+            Write-Output "::set-output name=branch::$BranchName"
+          } else {
+            $BranchName = $Env:GITHUB_REF -replace 'refs/heads/', ''
+            Write-Output "::set-output name=branch::$BranchName"
+          }  
+        env:
+          SOURCE_BRANCH: ${{ github.head_ref }}  
         id: extract_branch
 
       # Verify if FoD release with name matching branch name exists and if not create it
@@ -140,7 +149,7 @@ jobs:
             FOD_RELEASE_ID: ${{ steps.verify_fod_release.outputs.FOD_RELEASE_ID }}
             FOD_URL: "https://emea.fortify.com/"
             FOD_API_URL: "https://api.emea.fortify.com/"
-            FOD_UPLOADER_OPTS: "-ep 2 -pp 0 -I 1 -apf"
+            FOD_UPLOADER_OPTS: "-ep 2 -pp 2 -I 1 -apf"
             FOD_UPLOADER_NOTES: 'Triggered by GitHub Actions (${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})'
 
       # Pull SAST issues from Fortify on Demand and generate GitHub-optimized SARIF output
@@ -186,7 +195,7 @@ jobs:
           $IssueCountHigh = $ScanSummary.issueCountHigh
           $IssueCountMedium = $ScanSummary.issueCountMedium
           $IssueCountLow = $ScanSummary.issueCountLow
-          $TotalIssues = $ScanSummary.issueCountTotal
+          $IssueCountTotal = $ScanSummary.issueCountTotal
           Write-Output "Finished scan $ScanId with status '$ScanStatus'"
           Write-Output "Release '$ReleaseName' has a $StarRating star rating"
           Write-Output "Critical Issues:  $IssueCountCritical"
@@ -195,7 +204,9 @@ jobs:
           Write-Output "Low Issues:       $IssueCountLow"
           Write-Output "Total Issues:     $TotalIssues"
           # Example of using issue data
-          #if ($StarRating -lt 2) { exit 1 } # Fail if less than 2 star rating - set to your own criteria
+          if ("${Env:GITHUB_EVENT}" -eq "pull_request") {
+            if ($StarRating -lt 2) { exit 1 } # Fail if less than 2 star rating - set to your own criteria
+          }  
         env:
           FOD_TENANT: ${{ secrets.FOD_TENANT }}
           FOD_USER: ${{ secrets.FOD_USER }}

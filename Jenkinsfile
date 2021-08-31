@@ -29,12 +29,15 @@ pipeline {
         // Credential references
         GIT_CREDS = credentials('iwaexpress-git-creds-id')
         SSC_PASSWORD = credentials('iwaexpress-ssc-password-id')
+        SCANCENTRAL_PASSWORD = credentials('iwaexpress-scancentral-password-id')
        
         // The following are defaulted and can be overriden by creating a "Build parameter" of the same name
         SSC_URL = "${params.SSC_URL ?: 'http://ssc.mfdemouk.com'}" // URL of Fortify Software Security Center
         SSC_USERNAME = "${params.SSC_USERNAME ?: 'admin'}" // Default user login for Fortify Software Security Center
         SSC_PARENT_RELEASE = "${params.SSC_MASTER_RELEASE ?: 'master'}" // Default Parent Release, e.g. "master" to copy from when creating new version
-
+        SCANCENTRAL_URL = "${params.SCANCENTRAL_URL ?: 'http://scancentral.mfdemouk.com/api'}" // URL of ScanCentral DAST API
+        SCANCENTRAL_USERNAME = "${params.SCANCENTRAL_USERNAME ?: 'admin'}" // Default user login for ScanCentral DAST API
+        SCANCENTRAL_CICD_TOKEN = "${params.SCANCENTRAL_CICD_TOKEN ?: 'a8f7b472-fa21-4303-9a5b-90a6976afbc7'}" // Default ScanCentral CICD TOKEN
 	}
 
     stages {
@@ -172,9 +175,8 @@ pipeline {
             steps {
                 script {                    
                     if (params.FORTIFY_DAST) {
-                        println "DAST via FORTIFY is not yet implemented."
-                    } else {
-                        println "No Dynamic Application Security Testing (DAST) to do."
+                        def stdout = powershell(returnStdout: true, script: ".\\bin\\fortify-scancentral-dast.ps1 -ApiUri ${env.SCANCENTRAL_URL} -Username ${env.SCANCENTRAL_USERNAME} -Password ${env.SCANCENTRAL_PASSWORD} -CiCdToken ${env.SCANCENTRAL_CICD_TOKEN}")
+                        println stdout
                     }
                 }
             }

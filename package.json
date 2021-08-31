@@ -1,14 +1,14 @@
 {
   "name": "iwaexpress",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "IWAExpress (Insecure Web App) Pharmacy Direct an insecure NodeJS/Express web application for use in Micro Focus demonstrations",
-  "main": "app.js",
+  "main": "src/app.js",
   "private": true,
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "nodemon src/app.js",
     "test": "mocha --reporter spec",
-    "prod_win": "set NODE_ENV=production&& nodemon app.js",
-    "prod_nix": "NODE_ENV=production&& nodemon app.js",
+    "prod_win": "set NODE_ENV=production&& nodemon src/app.js",
+    "prod_nix": "NODE_ENV=production&& nodemon src/app.js",
     "createVersion": "node -r esm ssc/main.js createVersion --verName \"dev-branch\" --appName \"IWAExpress\"",
     "copyVersion": "node -r esm ssc/main.js copyVersion --verName \"example-2\" --appName \"IWAExpress\" --copyFrom \"master\""
   },
@@ -56,8 +56,8 @@
   "devDependencies": {
     "mocha-junit-reporter": "^2.0.0",
     "nodemon": "^1.19.4",
-    "webpack": "^5.37.0",
-    "webpack-cli": "^4.7.0"
+    "webpack": "^5.44.0",
+    "webpack-cli": "^4.7.2"
   },
   "engines": {
     "node": "~15.14.x"

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+
+<% include ../include/head.html %>
+
+<body>
+
+    <% include ../include/navbar.html %>
+
+    <div class="d-flex flex-column min-vh-100 site-wrap">
+
+        <div class="site-section">
+            <div class="container">
+
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Products</h1>
+                </div>
+
+                <div id="new-products">
+                    <div class="row">
+                        <div class="container">
+                            <div id="product-data" class="row">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class=row justify-content-center pt-4>
+                    <% include ../include/messages.html %>
+                </div>
+
+                <div class="row justify-content-center pt-4">
+                    <div class="col-12 col-md-10 col-lg-8">
+                        <form id="search" class="card card-sm">
+                            <div class="card-body row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <i class="fas fa-search h4 text-body"></i>
+                                </div>
+                                <div class="col">
+                                    <input id="keywords" class="form-control form-control-lg form-control-borderless" type="search" placeholder="Search products or keywords">
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-lg btn-success" type="submit">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row d-flex justify-content-center p-4">
+                    <h1 class="d-none">Search results for: &quot;<span id="search-query"></span>&quot;</h1>
+                </div>
+
+                <div class="row">
+                    <table class="table" id="data">
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <% include ../include/footer.html %>
+
+    <% include ../include/scripts.html %>
+
+    <script src="/assets/js/components/NewProducts.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#new-products').NewProducts();
+            (function () {
+                setTimeout(function () {
+                    $('input[class="star-rating"]').each(function () {
+                        $(this).rating({ displayOnly: true, showCaption: false, step: 1.0, size: 'xs', theme: 'krajee-fas' });
+                    })
+                }, 100);
+            })();
+        });
+    </script>
+
+</body>
+
+</html>

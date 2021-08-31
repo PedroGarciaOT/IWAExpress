@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+
+<% include ../include/head.html %>
+
+<body>
+
+<% include ../include/navbar.html %>
+
+<div class="d-flex flex-column min-vh-100 site-wrap">
+
+    <div class="site-section">
+        <div class="container">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2">Account</h1>
+                <a href="#!" class="btn btn-info">Edit Account</a>
+            </div>
+
+            <div class=row justify-content-center pt-4>    
+                <% include ../include/messages.html %>
+            </div>
+
+            <div>
+                <form>
+                    <div class="form-group row">
+                      <label for="staticUsername" class="col-sm-2 col-form-label">Username</label>
+                      <div class="col-sm-10">
+                        <input type="text" readonly class="form-control-plaintext" id="staticUsername" value="<%= account.username %>">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticPassword" class="col-sm-2 col-form-label">Password</label>
+                        <div class="col-sm-10">
+                          <input type="text" readonly class="form-control-plaintext" id="staticPassword" value="<%= account.password %>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                          <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="<%= account.email %>">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="staticMobile" class="col-sm-2 col-form-label">Mobile</label>
+                        <div class="col-sm-10">
+                          <input type="text" readonly class="form-control-plaintext" id="staticMobile" value="<%= account.mobile %>">
+                        </div>
+                    </div>
+                  </form>
+                
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h3">Payment Cards</h1>
+                    <a href="#!" class="btn btn-info">Edit Payment Cards</a>
+                </div>
+
+            </div>
+
+            <div>
+              <form>
+                  <div class="form-group row">
+                    <div id="user-cards"></div>
+                  </div>
+              </form>
+            </div>      
+
+            <div>
+              <p>
+                <button type="submit" class="btn btn-md height-auto px-4 py-3 btn-primary" onclick="window.history.go(-1);">Back</button>
+              </p>
+            </div>  
+
+        </div>
+    </div>
+
+</div>
+
+<% include ../include/footer.html %>
+    
+<% include ../include/scripts.html %>
+
+<script src="/assets/js/components/UserCards.js"></script>
+<script type="text/javascript">
+  (function ($) {
+      $(document).ready(function () {
+        $('#user-cards').UserCards({ userid: "<%= account.id %>" });
+      });
+  })(jQuery);
+</script>
+
+</body>
+
+</html>

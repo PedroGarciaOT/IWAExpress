@@ -20,7 +20,8 @@ RUN npm install
 # RUN npm ci --only=production
 
 # Bundle app source
-COPY . .
+ADD src ./
+COPY config ./config/
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
