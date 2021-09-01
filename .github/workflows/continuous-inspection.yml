@@ -30,6 +30,14 @@ env:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
+  first-job:
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo "${{ env.useFOD }}"
+        echo "${{ env.useSSC }}"
+
   Build-And-Test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -55,7 +63,7 @@ jobs:
     # Use the appropriate runner for building your source code.
     # TODO: Use a Windows runner for .NET projects that use msbuild. Additional changes to RUN commands will be required to switch to Windows syntax.
     runs-on: ubuntu-latest
-    if: ${{ env.useFOD == true }}
+    if: ${{ secrets.FOD_TENANT }}
 
     steps:
       # Check out source code
@@ -222,7 +230,7 @@ jobs:
           FOD_API_URI: "https://api.emea.fortify.com/"
 
   FoD-DAST-Scan:
-    if: ${{ env.useFOD == true }}
+    if: ${{ secrets.FOD_TENANT }}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
