@@ -40,7 +40,9 @@ jobs:
       - name: build and run docker images
         run: |
           docker-compose --profile production down
-          cp -d data/nginx/app.conf.prod data/nginx/app.conf
+          cp -fd data/nginx/app.conf.prod data/nginx/app.conf
+          bash -x ./bin/init-letsencrypt.sh
+          sudo chown -R $USER:$USER /home/ubuntu/actions-runner/_work/IWAExpress
+          cp -fd data/nginx/app.conf.prod data/nginx/app.conf
           docker-compose --profile production build
           docker-compose --profile production up -d
-  

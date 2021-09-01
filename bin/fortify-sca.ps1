@@ -5,17 +5,17 @@
 # Import some supporting functions
 Import-Module $PSScriptRoot\modules\FortifyFunctions.psm1
 
-$AppName = "IWAExpress"
-$AppVersion = "shopping-cart"
-$UploadToSSC = $False							# Upload issues to SSC by default
-$SSCUrl = $Env:SSC_URL							# Get SSC URL from environment variable "SSC_URL"
-$SSCAuthToken = $Env:SSC_AUTH_TOKEN				# SSC AnalysisUploadToken token from environment variable "SSC_AUTH_TOKEN"
-												# Can be created using: fortifyclient token -gettoken AnalysisUploadToken  -url $SSCUrl -user [your-username] -password [your-password]
-
+# Import local environment specific settings
+$EnvSettings = $(ConvertFrom-StringData -StringData (Get-Content ".\.env" | Out-String))
+$AppName = $EnvSettings['SSC_APP_NAME']
+$AppVersion = $EnvSettings['SSC_APP_VER_NAME']
+$SSCUrl = $EnvSettings['SSC_URL']
+$SSCAuthToken = $EnvSettings['SSC_AUTH_TOKEN']
 $ScanSwitches = "-Dcom.fortify.sca.Phase0HigherOrder.Languages=javascript,typescript -Dcom.fortify.sca.EnableDOMModeling=true -Dcom.fortify.sca.follow.imports=true -Dcom.fortify.sca.exclude.unimported.node.modules=true"
 
 # Test we have Fortify installed successfully
 Test-Environment
+if ([string]::IsNullOrEmpty($AppName)) { throw "Application Name has not been set" }
 
 # Run the translation and scan
 
@@ -33,7 +33,7 @@ Write-Host Running scan...
 Write-Host Generating PDF report...
 & ReportGenerator '-Dcom.fortify.sca.ProjectRoot=.fortify' -user "Demo User" -format pdf -f "$($AppName).pdf" -source "$($AppName).fpr"
 
-if ($UploadToSSC -eq $True) {
+if (![string]::IsNullOrEmpty($SSCUrl)) {
 	Write-Host Uploading results to SSC...
 	& fortifyclient uploadFPR -file "$($AppName).fpr" -url $SSCUrl -authtoken $SSCAuthToken -application $AppName -applicationVersion $AppVersion
 }

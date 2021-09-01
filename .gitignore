@@ -365,3 +365,4 @@ FodyWeavers.xsd
 *.fpr
 /.idea
 /email-db.json
+.env

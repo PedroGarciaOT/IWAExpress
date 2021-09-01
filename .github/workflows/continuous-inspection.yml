@@ -24,6 +24,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  useFOD: false
+  useSSC: true
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   Build-And-Test:
@@ -51,6 +55,7 @@ jobs:
     # Use the appropriate runner for building your source code.
     # TODO: Use a Windows runner for .NET projects that use msbuild. Additional changes to RUN commands will be required to switch to Windows syntax.
     runs-on: ubuntu-latest
+    if: useFOD == 'true'
 
     steps:
       # Check out source code
@@ -204,9 +209,9 @@ jobs:
           Write-Output "Low Issues:       $IssueCountLow"
           Write-Output "Total Issues:     $TotalIssues"
           # Example of using issue data
-          if ("${Env:GITHUB_EVENT}" -eq "pull_request") {
+          if ("$Env:GITHUB_REF" -clike 'refs/pull/*') {
             if ($StarRating -lt 2) { exit 1 } # Fail if less than 2 star rating - set to your own criteria
-          }  
+          } 
         env:
           FOD_TENANT: ${{ secrets.FOD_TENANT }}
           FOD_USER: ${{ secrets.FOD_USER }}
@@ -217,6 +222,7 @@ jobs:
           FOD_API_URI: "https://api.emea.fortify.com/"
 
   FoD-DAST-Scan:
+    if: useFOD == 'true'
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 

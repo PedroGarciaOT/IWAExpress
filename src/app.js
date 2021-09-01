@@ -136,7 +136,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./src/routes/api/*.js'],
+    apis: ['./src/routes/api/*.js', './routes/api/*.js'],
     securityDefinitions: {
         auth: {
             type: 'basic',
