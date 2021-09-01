@@ -24,6 +24,14 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Not yet use!
+env:
+  useFOD: false
+  useSSC: true
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
   Build-And-Test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
