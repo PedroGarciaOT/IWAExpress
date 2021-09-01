@@ -55,7 +55,7 @@ jobs:
     # Use the appropriate runner for building your source code.
     # TODO: Use a Windows runner for .NET projects that use msbuild. Additional changes to RUN commands will be required to switch to Windows syntax.
     runs-on: ubuntu-latest
-    if: useFOD == 'true'
+    if: env.useFOD == 'true'
 
     steps:
       # Check out source code
@@ -222,7 +222,7 @@ jobs:
           FOD_API_URI: "https://api.emea.fortify.com/"
 
   FoD-DAST-Scan:
-    if: useFOD == 'true'
+    if: env.useFOD == 'true'
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
