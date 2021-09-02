@@ -144,7 +144,7 @@ jobs:
         id: start_scancentral_scan
         shell: pwsh
         run: |
-          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL start -bt none -upload -application $Env:SSC_APPLICATION -version $Env:SSC_VERSION -uptoken $Env:SSC_UPLOAD_TOKEN -email $Env:SC_EMAIL -log scancentral.log 
+          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL start -bt none -upload -application $Env:SSC_APPLICATION -version $Env:SSC_VERSION -uptoken $Env:SSC_UPLOAD_TOKEN -email $Env:SC_EMAIL 
           Write-Output $ScanCentralOutput
           $ScanCentralToken = $ScanCentralOutput | Where-Object {$_ -match 'Submitted job and received token:\s+'} | ForEach-Object { $_ -replace 'Submitted job and received token:\s+', '' }
           Write-Output "::set-output name=SC_TOKEN::$ScanCentralToken"
@@ -160,7 +160,7 @@ jobs:
         id: check_scancntral_status
         shell: pwsh
         run: |
-          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL status -token $Env:SC_TOKEN -log scancentral.log
+          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL status -token $Env:SC_TOKEN
           Write-Output $ScanCentralOutput
           $ScanCentralStatus = $ScanCentralOutput | Where-Object {$_ -match 'The job state is:\s+'} | ForEach-Object { $_ -replace 'The job state is:\s+', '' }
           $SSCStatus = $ScanCentralOutput | Where-Object {$_ -match 'SSC upload state is:\s+'} | ForEach-Object { $_ -replace 'SSC upload state is:\s+', '' }
@@ -177,8 +177,8 @@ jobs:
         uses: actions/upload-artifact@v2                
         if: failure()
         with:
-           name: scancentral-log
-           path: ~/scancentral.log
+           name: scancentral-logs
+           path: ~/.fortify/scancentral*/log
 
       # The rest of the workflow is achieved through SSC Webhooks...
 
