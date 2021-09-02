@@ -186,9 +186,14 @@ jobs:
         id: check_scancentral_results
         shell: pwsh
         run: |
-          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL retrieve -token $Env:SC_TOKEN -f "${Env:SSC_APPLICATION}.fpr" -log "${Env:SSC_APPLICATION}-worker.log"
-          & fprutility -project .\IWAExpress.fpr -information -analyzerIssueCounts
+          # Download ScanCentral FPR results
+          & scancentral -url $Env:SC_CONTROLLER_URL retrieve -token $Env:SC_TOKEN -f "${Env:SSC_APPLICATION}.fpr" -log "${Env:SSC_APPLICATION}-worker.log"
+          #& fprutility -project .\IWAExpress.fpr -information -analyzerIssueCounts
           # TODO: check results
+          # Install the current Sarif.Multitool to the local machine cache (requires Node.js)
+          & npm i -g @microsoft/sarif-multitool
+          # Run the Sarif.Multitool using the NPM-installed copy
+          & npx @microsoft/sarif-multitool convert "${Env:SSC_APPLICATION}.fpr" -tool FortifyFpr -output "${Env:SSC_APPLICATION}.sarif"
         env:                                            
           SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
           SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
