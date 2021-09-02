@@ -137,10 +137,10 @@ jobs:
           client-auth-token: ${{ secrets.CLIENT_AUTH_TOKEN }}  # Optional, but required if ScanCentral Controller requires client authentication
 
       # Run Fortify ScanCentral Client
-      # Update BUILD_OPTS based on the ScanCentral Client documentation and your project's included tech stack(s).
+      # Update BUILD_OPTS (-bt none) based on the ScanCentral Client documentation and your project's included tech stack(s).
       #   ScanCentral Client will download dependencies for maven, gradle and msbuild projects.
       #   For other build tools, add your build commands to the workflow to download necessary dependencies and prepare according to Fortify SCA documentation.
-      - name: Perform SAST Scan
+      - name: Start SAST Scan
         id: start_scancentral_scan
         shell: pwsh
         run: |
@@ -148,6 +148,7 @@ jobs:
           Write-Output $ScanCentralOutput
           $ScanCentralToken = $ScanCentralOutput | Where-Object {$_ -match 'Submitted job and received token:\s+'} | ForEach-Object { $_ -replace 'Submitted job and received token:\s+', '' }
           Write-Output "::set-output name=SC_TOKEN::$ScanCentralToken"
+          Write-Output "Set SC_TOKEN to $ScanCentralToken"
         env:                                            
           SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
           SC_EMAIL: ${{ secrets.SC_EMAIL }}
@@ -156,8 +157,8 @@ jobs:
           SSC_VERSION: ${{ steps.extract_branch.outputs.branch }}
 
       # Poll ScanCentral tatus
-      - name: Check Scan Status
-        id: check_scancntral_status
+      - name: Check SAST Scan Status
+        id: check_scancentral_scan
         shell: pwsh
         run: |
           $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL status -token $Env:SC_TOKEN
@@ -167,10 +168,10 @@ jobs:
           Write-Output "The job state is: $ScanCentralStatus"
           Write-Output "SSC upload state is: $SSCStatus"
           Write-Output "::set-output name=SC_STATUS::$ScanCentralStatus"
-          Write-Output "::set-output name=SC_STATUS::$SSCStatus"
+          Write-Output "::set-output name=SSC_STATUS::$SSCStatus"
         env:                                            
           SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
-          SC_TOKEN: ${{ steps.start_scancentral_scan.SC_TOKEN }}
+          SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
 
       # Archive ScanCentral Client logs on failure
       - name: Save ScanCentral Logs
