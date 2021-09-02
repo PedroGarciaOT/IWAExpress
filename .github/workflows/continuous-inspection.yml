@@ -188,24 +188,31 @@ jobs:
         run: |
           # Download ScanCentral FPR results
           & scancentral -url $Env:SC_CONTROLLER_URL retrieve -token $Env:SC_TOKEN -f "${Env:SSC_APPLICATION}.fpr" -log "${Env:SSC_APPLICATION}-worker.log"
+          # If you have local SCA installed you can use fprutiliyu to extract information
           #& fprutility -project .\IWAExpress.fpr -information -analyzerIssueCounts
-          # TODO: check results
+          # Convert results to SARIF format
           # Install the current Sarif.Multitool to the local machine cache (requires Node.js)
           & npm i -g @microsoft/sarif-multitool
           # Run the Sarif.Multitool using the NPM-installed copy
-          & npx @microsoft/sarif-multitool convert "${Env:SSC_APPLICATION}.fpr" -tool FortifyFpr -output "${Env:SSC_APPLICATION}.sarif"
+          & npx @microsoft/sarif-multitool convert "${Env:SSC_APPLICATION}.fpr" --tool FortifyFpr --output "${Env:SSC_APPLICATION}.sarif"
         env:                                            
           SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
           SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
           SSC_APPLICATION: "IWAExpress"
 
-      # Archive ScanCentral Results
-      - name: Save ScanCentral Results
-        uses: actions/upload-artifact@v2                
-        if: always()
+      # Check if SARIF output file has been created
+      - name: Check file existence
+        id: check_sast_files
+        uses: andstor/file-existence-action@v1
         with:
-           name: scancentral-results
-           path: ~/*.fpr
+          files: "./IWAExpress.sarif"
+
+      # Import Fortify SAST results to GitHub Security Code Scanning
+      - name: Import Results
+        if: steps.check_sast_files.files_exists == 'true'
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ./IWAExpress.sarif
 
       # Archive ScanCentral Client logs on failure
       - name: Save ScanCentral Logs
