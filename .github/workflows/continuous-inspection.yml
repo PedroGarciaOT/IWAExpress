@@ -161,17 +161,46 @@ jobs:
         id: check_scancentral_scan
         shell: pwsh
         run: |
-          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL status -token $Env:SC_TOKEN
-          Write-Output $ScanCentralOutput
-          $ScanCentralStatus = $ScanCentralOutput | Where-Object {$_ -match 'The job state is:\s+'} | ForEach-Object { $_ -replace 'The job state is:\s+', '' }
-          $SSCStatus = $ScanCentralOutput | Where-Object {$_ -match 'SSC upload state is:\s+'} | ForEach-Object { $_ -replace 'SSC upload state is:\s+', '' }
-          Write-Output "The job state is: $ScanCentralStatus"
-          Write-Output "SSC upload state is: $SSCStatus"
+          do {
+            $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL status -token $Env:SC_TOKEN
+            Write-Output $ScanCentralOutput
+            $ScanCentralStatus = $ScanCentralOutput | Where-Object {$_ -match 'The job state is:\s+'} | ForEach-Object { $_ -replace 'The job state is:\s+', '' }
+            $SSCStatus = $ScanCentralOutput | Where-Object {$_ -match 'SSC upload state is:\s+'} | ForEach-Object { $_ -replace 'SSC upload state is:\s+', '' }
+            Write-Output "The job state is: $ScanCentralStatus"
+            Write-Output "SSC upload state is: $SSCStatus"
+            if ($ScanCentralStatus -ne "COMPLETED" -and $SSCStatus -ne "COMPLETED") {
+              Write-Output "Sleeping for $Env:SC_POLL_INTERVAL seconds..."
+              Start-Sleep -Seconds $Env:SC_POLL_INTERVAL
+            }
+          } while ($ScanCentralStatus -ne "COMPLETED" -and $SSCStatus -ne "COMPLETED")
           Write-Output "::set-output name=SC_STATUS::$ScanCentralStatus"
           Write-Output "::set-output name=SSC_STATUS::$SSCStatus"
         env:                                            
           SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
           SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
+          SC_POLL_INTERVAL: 10
+          SSC_APPLICATION: "IWAExpress"
+
+      # Retrieve Scan Results
+      - name: Check SAST Scan Results
+        id: check_scancentral_results
+        shell: pwsh
+        run: |
+          $ScanCentralOutput = & scancentral -url $Env:SC_CONTROLLER_URL retrieve -token $Env:SC_TOKEN -f "${Env:SSC_APPLICATION}.fpr" -log "${Env:SSC_APPLICATION}-worker.log"
+          & fprutility -project .\IWAExpress.fpr -information -analyzerIssueCounts
+          # TODO: check results
+        env:                                            
+          SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
+          SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
+          SSC_APPLICATION: "IWAExpress"
+
+      # Archive ScanCentral Results
+      - name: Save ScanCentral Results
+        uses: actions/upload-artifact@v2                
+        if: always()
+        with:
+           name: scancentral-results
+           path: ~/*.fpr
 
       # Archive ScanCentral Client logs on failure
       - name: Save ScanCentral Logs
@@ -180,8 +209,6 @@ jobs:
         with:
            name: scancentral-logs
            path: ~/.fortify/scancentral*/log
-
-      # The rest of the workflow is achieved through SSC Webhooks...
 
   FoD-SAST-Scan:
     # Use the appropriate runner for building your source code.
