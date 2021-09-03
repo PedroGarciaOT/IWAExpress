@@ -103,7 +103,7 @@ jobs:
           Set-SSCConfig -SscUri $Env:SSC_URL -TokenType UnifiedLoginToken -Credential $Credential
           Get-FODToken
           Write-Output "Checking for existence of $Env:GITHUB_BRANCH_NAME version in application $Env:SSC_APPLICATION_NAME"
-          if (-not (Test-SSCApplicationVersion -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAM))  
+          if (-not (Test-SSCApplicationVersion -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAME))  {
               Write-Output "Application version does not exist, creating it..."
               $AppId = Get-SSCApplicationId -ApplicationName $Env:SSC_APPLICATION_NAME
               # Create any AttributeObjects first - note others might be mandatory
