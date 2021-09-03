@@ -101,7 +101,7 @@ jobs:
           $PWord = ConvertTo-SecureString -String "$Env:SSC_PASSWORD" -AsPlainText -Force
           $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList "$Env:SSC_USER", $PWord
           Set-SSCConfig -SscUri $Env:SSC_URL -TokenType UnifiedLoginToken -Credential $Credential
-          Get-FODToken
+          Get-SSCToken
           Write-Output "Checking for existence of $Env:GITHUB_BRANCH_NAME version in application $Env:SSC_APPLICATION_NAME"
           if (-not (Test-SSCApplicationVersion -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAME))  {
               Write-Output "Application version does not exist, creating it..."
