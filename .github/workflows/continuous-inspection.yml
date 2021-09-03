@@ -93,7 +93,6 @@ jobs:
       #   FOD_PARENT_RELEASE_ID is the FoD release id corresponding to the parent branch of any newly created branch, this is typically "master" or "main"
       # The PowerShellForFOD module is used to carry out the automation (see: https://github.com/fortify-community-plugins/PowerShellForFOD)
       - name: Verify SSC Release
-        if: ${{ false }}
         shell: pwsh
         run: |
           Write-Output "Installing PowerShellForSSC module ..."
