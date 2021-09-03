@@ -97,35 +97,40 @@ jobs:
         shell: pwsh
         run: |
           Write-Output "Installing PowerShellForSSC module ..."
-          Install-Module PowerShellForFOD -Scope CurrentUser -Force -Repository PSGallery
-          Write-Output "Configuring FOD API $Env:FOD_API_URI or $env.FOD_API_URI ..."
-          $PWord = ConvertTo-SecureString -String "$Env:FOD_PAT" -AsPlainText -Force
-          $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList "$Env:FOD_TENANT\$Env:FOD_USER", $PWord
-          Set-FODConfig -ApiUri $Env:FOD_API_URI -GrantType UsernamePassword -Scope api-tenant
-          Get-FODToken -Credential $Credential
-          Write-Output "Checking for existence of $Env:GITHUB_BRANCH_NAME release in application $Env:FOD_APPLICATION_NAME"
-          if (-not (Test-FODRelease -ApplicationName $Env:FOD_APPLICATION_NAME -ReleaseName $Env:GITHUB_BRANCH_NAME)) { 
-              Write-Output "Release does not exist, creating it..."
-              $AppId = Get-FODApplicationId -ApplicationName $Env:FOD_APPLICATION_NAME
-              $NewReleaseObj = New-FODReleaseObject -ApplicationId $AppId -Name $Env:GITHUB_BRANCH_NAME -Description "Created automatically from GitHub" -CopyState -CopyReleaseId $env:FOD_PARENT_RELEASE_ID -SDLCStatus Development
-              $RelResponse = Add-FODRelease -Release $NewReleaseObj
-              $ReleaseId = $RelResponse.releaseId
-              Write-Output "::set-output name=FOD_RELEASE_ID::$ReleaseId"
+          Install-Module PowerShellForSSC -Scope CurrentUser -Force -Repository PSGallery
+          Write-Output "Configuring SSC API $Env:SSC_URL ..."
+          $PWord = ConvertTo-SecureString -String "$Env:SSC_PASSWORD" -AsPlainText -Force
+          $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList "$Env:SSC_USER", $PWord
+          Set-SSCConfig -SscUri $Env:SSC_URL -TokenType UnifiedLoginToken -Credential $Credential
+          Get-FODToken
+          Write-Output "Checking for existence of $Env:GITHUB_BRANCH_NAME version in application $Env:SSC_APPLICATION_NAME"
+          if (-not (Test-SSCApplicationVersion -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAM))  
+              Write-Output "Application version does not exist, creating it..."
+              $AppId = Get-SSCApplicationId -ApplicationName $Env:SSC_APPLICATION_NAME
+              # Create any AttributeObjects first - note others might be mandatory
+              $attributes = @(
+                  New-SSCAttributeObject -AttributeDefinitionId 5 -Value "New"
+                  New-SSCAttributeObject -AttributeDefinitionId 6 -Value "Internal"
+                  New-SSCAttributeObject -AttributeDefinitionId 7 -Value "internalnetwork"
+                  New-SSCAttributeObject -AttributeDefinitionId 1 -Value "High"
+              )
+              $VersionObject = New-SSCApplicationVersionObject -ApplicationId $AppId -Name $Env:GITHUB_BRANCH_NAME -Description "Created automatically from GitHub" -IssueTemplateId "Prioritized-HighRisk-Project-Template" -Attributes $attributes -CopyData -CopyState -CopyVersionId $env:SSC_PARENT_VERSION
+              $VersionResponse = Add-SSCApplicationVersion -ApplicationVersion $VersionObject -ForceVerbose
+              $VersionId = $VersionResponse.id
+              Write-Output "::set-output name=SSC_APP_VER_ID::$VersionId"
               Start-Sleep -Seconds 30 # Brief pause to make sure release has been created!
           } else {
-              Write-Output "Release exists..."
-              $ReleaseId = Get-FODReleaseId -ApplicationName $Env:FOD_APPLICATION_NAME -ReleaseName $Env:GITHUB_BRANCH_NAME
-              Write-Output "::set-output name=FOD_RELEASE_ID::$ReleaseId"
+              Write-Output "Application version exists..."
+              $VersionId = Get-SSCApplicationVersionId -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAME
+              Write-Output "::set-output name=SSC_APP_VER_ID::$VersionId"
           }    
         id: verify_ssc_release
         env:
-          FOD_TENANT: ${{ secrets.FOD_TENANT }}
-          FOD_USER: ${{ secrets.FOD_USER }}
-          FOD_PAT: ${{ secrets.FOD_PAT }}
-          FOD_APPLICATION_NAME: "IWAExpress"
-          FOD_PARENT_RELEASE_ID: ${{ secrets.FOD_PARENT_RELEASE_ID }}
-          FOD_URL: "https://emea.fortify.com/"
-          FOD_API_URI: "https://api.emea.fortify.com/"
+          SSC_USER: ${{ secrets.SSC_USER }}
+          SSC_PASSWORD: ${{ secrets.SSC_PASSWORD }}
+          SSC_APPLICATION_NAME: "IWAExpress"
+          SSC_PARENT_VERSION: ${{ secrets.SSC_PARENT_VERSION }}
+          SSC_URL: "${{ secrets.SSC_URL }}"
           GITHUB_BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
 
       # Set up Fortify ScanCentral Client
@@ -209,7 +214,7 @@ jobs:
 
       # Import Fortify SAST results to GitHub Security Code Scanning
       - name: Import Results
-        if: steps.check_sast_files.files_exists == 'true'
+        #if: steps.check_sast_files.files_exists == 'true'
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: ./IWAExpress.sarif
