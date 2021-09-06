@@ -160,7 +160,7 @@ jobs:
           SSC_APPLICATION: "IWAExpress"
           SSC_VERSION: ${{ steps.extract_branch.outputs.branch }}
 
-      # Poll ScanCentral tatus
+      # Poll ScanCentral status
       - name: Check SAST Scan Status
         id: check_scancentral_scan
         shell: pwsh
@@ -185,38 +185,45 @@ jobs:
           SC_POLL_INTERVAL: 10
           SSC_APPLICATION: "IWAExpress"
 
-      # Retrieve Scan Results
-      - name: Check SAST Scan Results
-        id: check_scancentral_results
+      # Automatically Approve any SSC artifacts
+      - name: Approve SSC artifacts
+        id: approve_ssc_artifacts
         shell: pwsh
         run: |
-          # Download ScanCentral FPR results
-          & scancentral -url $Env:SC_CONTROLLER_URL retrieve -token $Env:SC_TOKEN -f "${Env:SSC_APPLICATION}.fpr" -log "${Env:SSC_APPLICATION}-worker.log"
-          # If you have local SCA installed you can use fprutiliyu to extract information
-          #& fprutility -project .\IWAExpress.fpr -information -analyzerIssueCounts
-          # Convert results to SARIF format
-          # Install the current Sarif.Multitool to the local machine cache (requires Node.js)
-          & npm i -g @microsoft/sarif-multitool
-          # Run the Sarif.Multitool using the NPM-installed copy
-          & npx @microsoft/sarif-multitool convert "${Env:SSC_APPLICATION}.fpr" --tool FortifyFpr --output "${Env:SSC_APPLICATION}.sarif"
+          $AppVersionId = (Get-SSCScanCentralSASTJob -JobToken $Env:SC_TOKEN -Fields pvId -Raw).pvId
+          $ArtifactIds = Get-SSCApplicationVersionArtifacts -Id $AppVersionId -Query "status:REQUIRE_AUTH" -Fields "id" -Raw
+          if ($ArtifactIds.Count > 0) {
+              $AId = ($ArtifactIds[0]).id
+              Approve-SSCArtifacts -Ids $AId -Comment "Automatically approved from GitHub"
+          } else {
+              Write-Output "No SSC artifacts require approval..."
+          }
+          Write-Output "::set-output name=SSC_APP_VER_ID::$AppVersionId"
         env:                                            
-          SC_CONTROLLER_URL: ${{ secrets.SC_CONTROLLER_URL }}
           SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
           SSC_APPLICATION: "IWAExpress"
 
+      # Pull SAST issues from Fortify Software Security Center and generate GitHub-optimized SARIF output
+      - name: Export Results
+        uses: fortify/gha-export-vulnerabilities@v1
+        with:
+          ssc_base_url: "${{ secrets.SSC_URL }}"
+          ssc_auth_token: ${{ secrets.SSC_UPLOAD_TOKEN }}
+          ssc_version_id: ${{ steps.approve_ssc_artifacts.SSC_APP_VER_ID }}
+
       # Check if SARIF output file has been created
       - name: Check file existence
-        id: check_sast_files
+        id: check_files_sast
         uses: andstor/file-existence-action@v1
         with:
-          files: "./IWAExpress.sarif"
+          files: "./gh-fortify-sast.sarif"
 
       # Import Fortify SAST results to GitHub Security Code Scanning
       - name: Import Results
-        #if: steps.check_sast_files.files_exists == 'true'
+        if: steps.check_files_sast.outputs.files_exists == 'true'
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: ./IWAExpress.sarif
+          sarif_file: ./gh-fortify-sast.sarif
 
       # Archive ScanCentral Client logs on failure
       - name: Save ScanCentral Logs
@@ -344,14 +351,14 @@ jobs:
 
       # Check if SARIF output file has been created
       - name: Check file existence
-        id: check_files
+        id: check_files_fod
         uses: andstor/file-existence-action@v1
         with:
           files: "./gh-fortify-sast.sarif"
 
       # Import Fortify SAST results to GitHub Security Code Scanning
       - name: Import Results
-        if: steps.check_files.outputs.files_exists == 'true'
+        if: steps.check_files_fod.outputs.files_exists == 'true'
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: ./gh-fortify-sast.sarif
