@@ -197,16 +197,16 @@ jobs:
           Get-SSCToken
           Write-Output "Checking release $Env:GITHUB_BRANCH_NAME to see if any artifacts need approval"
           $AppVersionId = (Get-SSCScanCentralSASTJob -JobToken $Env:SC_TOKEN -Fields pvId -Raw).pvId
+          Write-Output "::set-output name=SSC_APP_VER_ID::$AppVersionId"
           Write-Output "AppVersionId = $AppVersionId"
           $ArtifactIds = Get-SSCApplicationVersionArtifacts -Id $AppVersionId -Query "status:REQUIRE_AUTH" -Fields "id" -Raw
           Write-Output "ArtifactIds = $ArtifactIds"
-          if ($ArtifactIds.Count > 0) {
+          if ($ArtifactIds) {
               $AId = ($ArtifactIds[0]).id
               Approve-SSCArtifacts -Ids $AId -Comment "Automatically approved from GitHub"
           } else {
               Write-Output "No SSC artifacts require approval..."
           }
-          Write-Output "::set-output name=SSC_APP_VER_ID::$AppVersionId"
         env:
           SSC_USER: ${{ secrets.SSC_USER }}
           SSC_PASSWORD: ${{ secrets.SSC_PASSWORD }}
