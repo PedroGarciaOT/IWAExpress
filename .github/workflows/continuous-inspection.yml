@@ -23,11 +23,15 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
-# Not yet use!
-env:
-  useFOD: false
-  useSSC: true
+    inputs:
+      useScanCentral:
+        description: 'Carry out Application Security testing using Fortify ScanCentral SAST'
+        required: false
+        default: 'true'
+      useFortifyOnDemand:
+        description: 'Carry out Application Security testing using Fortify on Demand'
+        required: false
+        default: 'false'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -57,7 +61,7 @@ jobs:
     # Use the appropriate runner for building your source code.
     # TODO: Use a Windows runner for .NET projects that use msbuild. Additional changes to RUN commands will be required to switch to Windows syntax.
     runs-on: ubuntu-latest
-    if: ${{ true }} 
+    if: ${{ github.event.inputs.useScanCentral == 'true' }} 
 
     steps:
       # Check out source code
@@ -217,23 +221,7 @@ jobs:
           SSC_APPLICATION_NAME: "IWAExpress"
           SSC_URL: "${{ secrets.SSC_URL }}"
           GITHUB_BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-          SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
-
-      # Automatically Approve any SSC artifacts
-      - name: PowerShell Test
-        shell: pwsh
-        run: |
-          Write-Output $Env:ssc_base_url
-          Write-Output $Env:ssc_user
-          Write-Output $Env:ssc_password
-          Write-Output $Env:ssc_ersion_id
-          Write-Output $Env:ssc_version_name
-        env:
-          ssc_base_url: ${{ secrets.SSC_URL }}
-          ssc_user: ${{ secrets.SSC_USER }}
-          ssc_password: ${{ secrets.SSC_PASSWORD }}
-          ssc_version_id: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_ID }}
-          ssc_version_name: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_NAME }}    
+          SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }} 
         
       # Pull SAST issues from Fortify Software Security Center and generate GitHub-optimized SARIF output
       - name: Export Results
@@ -271,7 +259,7 @@ jobs:
     # Use the appropriate runner for building your source code.
     # TODO: Use a Windows runner for .NET projects that use msbuild. Additional changes to RUN commands will be required to switch to Windows syntax.
     runs-on: ubuntu-latest
-    if: ${{ false }} 
+    if: ${{ github.event.inputs.useFortifyOnDemand == 'true' }} 
 
     steps:
       # Check out source code
