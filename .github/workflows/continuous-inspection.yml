@@ -232,8 +232,8 @@ jobs:
           ssc_base_url: ${{ secrets.SSC_URL }}
           ssc_user: ${{ secrets.SSC_USER }}
           ssc_password: ${{ secrets.SSC_PASSWORD }}
-          ssc_version_id: ${{ steps.verify_ssc_release.SSC_APP_VER_ID }}
-          ssc_version_name: ${{ steps.verify_ssc_release.SSC_APP_VER_NAME }}    
+          ssc_version_id: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_ID }}
+          ssc_version_name: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_NAME }}    
         
       # Pull SAST issues from Fortify Software Security Center and generate GitHub-optimized SARIF output
       - name: Export Results
@@ -242,8 +242,8 @@ jobs:
           ssc_base_url: ${{ secrets.SSC_URL }}
           ssc_user: ${{ secrets.SSC_USER }}
           ssc_password: ${{ secrets.SSC_PASSWORD }}
-          #ssc_version_id: ${{ steps.verify_ssc_release.SSC_APP_VER_ID }}
-          ssc_version_name: ${{ steps.verify_ssc_release.SSC_APP_VER_NAME }}
+          ssc_version_id: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_ID }}
+          #ssc_version_name: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_NAME }}
 
       # Check if SARIF output file has been created
       - name: Check file existence
