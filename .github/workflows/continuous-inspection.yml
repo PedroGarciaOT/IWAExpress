@@ -93,6 +93,7 @@ jobs:
       #   FOD_PARENT_RELEASE_ID is the FoD release id corresponding to the parent branch of any newly created branch, this is typically "master" or "main"
       # The PowerShellForFOD module is used to carry out the automation (see: https://github.com/fortify-community-plugins/PowerShellForFOD)
       - name: Verify SSC Release
+        id: verify_ssc_release
         shell: pwsh
         run: |
           Write-Output "Installing PowerShellForSSC module ..."
@@ -123,7 +124,6 @@ jobs:
               $VersionId = Get-SSCApplicationVersionId -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAME
               Write-Output "::set-output name=SSC_APP_VER_ID::$VersionId"
           }    
-        id: verify_ssc_release
         env:
           SSC_USER: ${{ secrets.SSC_USER }}
           SSC_PASSWORD: ${{ secrets.SSC_PASSWORD }}
@@ -198,11 +198,10 @@ jobs:
           Write-Output "Checking release $Env:GITHUB_BRANCH_NAME to see if any artifacts need approval"
           $AppVersionId = (Get-SSCScanCentralSASTJob -JobToken $Env:SC_TOKEN -Fields pvId -Raw).pvId
           Write-Output "::set-output name=SSC_APP_VER_ID::$AppVersionId"
-          Write-Output "AppVersionId = $AppVersionId"
           $ArtifactIds = Get-SSCApplicationVersionArtifacts -Id $AppVersionId -Query "status:REQUIRE_AUTH" -Fields "id" -Raw
-          Write-Output "ArtifactIds = $ArtifactIds"
           if ($ArtifactIds) {
               $AId = ($ArtifactIds[0]).id
+              Write-Output "Approving Artifact id $AId on application version $AppVersionId"
               Approve-SSCArtifacts -Ids $AId -Comment "Automatically approved from GitHub"
           } else {
               Write-Output "No SSC artifacts require approval..."
@@ -221,7 +220,7 @@ jobs:
         with:
           ssc_base_url: "${{ secrets.SSC_URL }}"
           ssc_auth_token: ${{ secrets.SSC_UPLOAD_TOKEN }}
-          ssc_version_id: ${{ steps.approve_ssc_artifacts.SSC_APP_VER_ID }}
+          ssc_version_id: ${{ steps.verify_ssc_release.SSC_APP_VER_ID }}
 
       # Check if SARIF output file has been created
       - name: Check file existence
