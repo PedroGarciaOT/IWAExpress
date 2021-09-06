@@ -219,6 +219,22 @@ jobs:
           GITHUB_BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
           SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
 
+      # Automatically Approve any SSC artifacts
+      - name: PowerShell Test
+        shell: pwsh
+        run: |
+          Write-Output $Env:ssc_base_url
+          Write-Output $Env:ssc_user
+          Write-Output $Env:ssc_password
+          Write-Output $Env:ssc_ersion_id
+          Write-Output $Env:ssc_version_name
+        env:
+          ssc_base_url: ${{ secrets.SSC_URL }}
+          ssc_user: ${{ secrets.SSC_USER }}
+          ssc_password: ${{ secrets.SSC_PASSWORD }}
+          ssc_version_id: ${{ steps.verify_ssc_release.SSC_APP_VER_ID }}
+          ssc_version_name: ${{ steps.verify_ssc_release.SSC_APP_VER_NAME }}    
+        
       # Pull SAST issues from Fortify Software Security Center and generate GitHub-optimized SARIF output
       - name: Export Results
         uses: fortify/gha-export-vulnerabilities@v1
