@@ -32,6 +32,9 @@ on:
         description: 'Carry out Application Security testing using Fortify on Demand'
         required: false
         default: 'false'
+      sscVulnFilterSetId:
+        description: 'ID of the SSC filter set from which to pull SAST issues'
+        required: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -169,7 +172,6 @@ jobs:
 
       # Poll ScanCentral status
       - name: Check SAST Scan Status
-        if: ${{ false }} 
         id: check_scancentral_scan
         shell: pwsh
         run: |
@@ -195,7 +197,6 @@ jobs:
 
       # Automatically Approve any SSC artifacts
       - name: Approve SSC artifacts
-        if: ${{ false }} 
         id: approve_ssc_artifacts
         shell: pwsh
         run: |
@@ -232,6 +233,7 @@ jobs:
           ssc_password: ${{ secrets.SSC_PASSWORD }}
           ssc_version_id: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_ID }}
           #ssc_version_name: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_NAME }}
+          ssc_vuln_filter_set_id: ${{ github.event.inputs.sscVulnFilterSetId }}
 
       # Check if SARIF output file has been created
       - name: Check file existence
