@@ -190,6 +190,12 @@ jobs:
         id: approve_ssc_artifacts
         shell: pwsh
         run: |
+          Write-Output "Configuring SSC API $Env:SSC_URL ..."
+          $PWord = ConvertTo-SecureString -String "$Env:SSC_PASSWORD" -AsPlainText -Force
+          $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList "$Env:SSC_USER", $PWord
+          Set-SSCConfig -SscUri $Env:SSC_URL -TokenType UnifiedLoginToken -Credential $Credential
+          Get-SSCToken
+          Write-Output "Checking release $Env:GITHUB_BRANCH_NAME to see if any artifacts need approval"
           $AppVersionId = (Get-SSCScanCentralSASTJob -JobToken $Env:SC_TOKEN -Fields pvId -Raw).pvId
           $ArtifactIds = Get-SSCApplicationVersionArtifacts -Id $AppVersionId -Query "status:REQUIRE_AUTH" -Fields "id" -Raw
           if ($ArtifactIds.Count > 0) {
@@ -199,9 +205,13 @@ jobs:
               Write-Output "No SSC artifacts require approval..."
           }
           Write-Output "::set-output name=SSC_APP_VER_ID::$AppVersionId"
-        env:                                            
+        env:
+          SSC_USER: ${{ secrets.SSC_USER }}
+          SSC_PASSWORD: ${{ secrets.SSC_PASSWORD }}
+          SSC_APPLICATION_NAME: "IWAExpress"
+          SSC_URL: "${{ secrets.SSC_URL }}"
+          GITHUB_BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
           SC_TOKEN: ${{ steps.start_scancentral_scan.outputs.SC_TOKEN }}
-          SSC_APPLICATION: "IWAExpress"
 
       # Pull SAST issues from Fortify Software Security Center and generate GitHub-optimized SARIF output
       - name: Export Results
