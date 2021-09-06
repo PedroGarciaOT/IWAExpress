@@ -124,6 +124,8 @@ jobs:
               $VersionId = Get-SSCApplicationVersionId -ApplicationName $Env:SSC_APPLICATION_NAME -VersionName $Env:GITHUB_BRANCH_NAME
               Write-Output "::set-output name=SSC_APP_VER_ID::$VersionId"
           }    
+          $VersionName = $Env:SSC_APPLICATION_NAME + ":" + $Env:GITHUB_BRANCH_NAME
+          Write-Output "::set-output name=SSC_APP_VER_NAME::$VersionName"
         env:
           SSC_USER: ${{ secrets.SSC_USER }}
           SSC_PASSWORD: ${{ secrets.SSC_PASSWORD }}
@@ -145,6 +147,7 @@ jobs:
       #   ScanCentral Client will download dependencies for maven, gradle and msbuild projects.
       #   For other build tools, add your build commands to the workflow to download necessary dependencies and prepare according to Fortify SCA documentation.
       - name: Start SAST Scan
+        if: ${{ false }} 
         id: start_scancentral_scan
         shell: pwsh
         run: |
@@ -162,6 +165,7 @@ jobs:
 
       # Poll ScanCentral status
       - name: Check SAST Scan Status
+        if: ${{ false }} 
         id: check_scancentral_scan
         shell: pwsh
         run: |
@@ -187,6 +191,7 @@ jobs:
 
       # Automatically Approve any SSC artifacts
       - name: Approve SSC artifacts
+        if: ${{ false }} 
         id: approve_ssc_artifacts
         shell: pwsh
         run: |
@@ -218,9 +223,11 @@ jobs:
       - name: Export Results
         uses: fortify/gha-export-vulnerabilities@v1
         with:
-          ssc_base_url: "${{ secrets.SSC_URL }}"
-          ssc_auth_token: ${{ secrets.SSC_UPLOAD_TOKEN }}
-          ssc_version_id: ${{ steps.verify_ssc_release.SSC_APP_VER_ID }}
+          ssc_base_url: ${{ secrets.SSC_URL }}
+          ssc_user: ${{ secrets.SSC_USER }}
+          ssc_password: ${{ secrets.SSC_PASSWORD }}
+          #ssc_version_id: ${{ steps.verify_ssc_release.SSC_APP_VER_ID }}
+          ssc_version_name: ${{ steps.verify_ssc_release.SSC_APP_VER_NAME }}
 
       # Check if SARIF output file has been created
       - name: Check file existence
