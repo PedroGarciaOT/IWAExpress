@@ -255,6 +255,34 @@ jobs:
         with:
            name: scancentral-logs
            path: ~/.fortify/scancentral*/log
+           
+      # Run script to check the results of the scan to determine success/failure
+      - name: Check SSC Scan Status
+        shell: pwsh
+        run: |
+          Write-Output "Configuring SSC API $Env:SSC_URL ..."
+          $PWord = ConvertTo-SecureString -String "$Env:SSC_PASSWORD" -AsPlainText -Force
+          $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList "$Env:SSC_USER", $PWord
+          Set-SSCConfig -SscUri $Env:SSC_URL -TokenType UnifiedLoginToken -Credential $Credential
+          Get-SSCToken
+          Write-Output "Checking release $Env:GITHUB_BRANCH_NAME to see if it passes security gate"
+          $Issues = Get-SSCApplicationVersionIssues -Id $Env:SSC_APP_VER_ID -Query '[fortify priority order]:critical [fortify priority order]:high' -Raw
+          $TotalIssueCount = $Issues.Count
+          $CriticalIssueCount = ($Issues | Where-Object {$_.friority -eq "Critical"}).Count
+          $HighIssueCount = ($Issues | Where-Object {$_.friority -eq "Critical"}).Count
+          Write-Output "Critical issues: $CriticalIssueCount"
+          Write-Output "High issues: $HighIssueCount"
+          Write-Output "Found $IssueCount issues"
+          # Example of using issue data
+          if ("$Env:GITHUB_REF" -clike 'refs/pull/*') {
+            if ($IssueCount -gt 1) { exit 1 } # Fail if more than 1 issue - set to your own criteria
+          } 
+        env:
+          SSC_USER: ${{ secrets.SSC_USER }}
+          SSC_PASSWORD: ${{ secrets.SSC_PASSWORD }}
+          SSC_APPLICATION_NAME: "IWAExpress"
+          SSC_URL: "${{ secrets.SSC_URL }}"
+          SSC_APP_VER_ID: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_ID }}
 
   FoD-SAST-Scan:
     # Use the appropriate runner for building your source code.
