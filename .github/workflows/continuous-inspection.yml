@@ -154,7 +154,6 @@ jobs:
       #   ScanCentral Client will download dependencies for maven, gradle and msbuild projects.
       #   For other build tools, add your build commands to the workflow to download necessary dependencies and prepare according to Fortify SCA documentation.
       - name: Start SAST Scan
-        if: ${{ false }} 
         id: start_scancentral_scan
         shell: pwsh
         run: |
