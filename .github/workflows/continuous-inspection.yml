@@ -272,7 +272,7 @@ jobs:
           $HighIssueCount = ($Issues | Where-Object {$_.friority -eq "Critical"}).Count
           Write-Output "Critical issues: $CriticalIssueCount"
           Write-Output "High issues: $HighIssueCount"
-          Write-Output "Found $IssueCount issues"
+          Write-Output "Total issues: $TotalIssueCount"
           # Example of using issue data
           if ("$Env:GITHUB_REF" -clike 'refs/pull/*') {
             if ($IssueCount -gt 1) { exit 1 } # Fail if more than 1 issue - set to your own criteria
@@ -283,6 +283,7 @@ jobs:
           SSC_APPLICATION_NAME: "IWAExpress"
           SSC_URL: "${{ secrets.SSC_URL }}"
           SSC_APP_VER_ID: ${{ steps.verify_ssc_release.outputs.SSC_APP_VER_ID }}
+          GITHUB_BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
 
   FoD-SAST-Scan:
     # Use the appropriate runner for building your source code.
