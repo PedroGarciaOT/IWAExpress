@@ -27,11 +27,11 @@ on:
       useScanCentral:
         description: 'Carry out Application Security testing using Fortify ScanCentral SAST'
         required: false
-        default: 'true'
+        default: 'false'
       useFortifyOnDemand:
         description: 'Carry out Application Security testing using Fortify on Demand'
         required: false
-        default: 'false'
+        default: 'true'
       sscVulnFilterSetId:
         description: 'ID of the SSC filter set from which to pull SAST issues'
         required: false

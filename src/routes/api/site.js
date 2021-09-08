@@ -9,6 +9,9 @@ const config = require('config');
 const crypto = require('crypto');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
+const { JSDOM } = require( "jsdom" );
+const { window } = new JSDOM( "" );
+const $ = require( "jquery" )( window );
 
 /**
  * @swagger
@@ -23,14 +26,16 @@ router.post('/subscribe-newsletter', function (request, response) {
     console.log("API :: Site Subscribe Newsletter");
     console.log(`adding email ${request.body.email}`);
     const file = "email-db.json";
-    let user = {
-        name: '',
-        email: request.body.email
+    let userObj = null;
+
+    // JSON Injection
+    if (request.body.email !== null) {
+        userObj = $.parseJSON('{"role": "user", "email" : "' + request.body.email + '"}');
     }
 
     const appConf = config.get('App');
     //const encryptionKey = appConf.encryptionKey;
-    // hard coded encryption key example
+    // Hard coded encryption key 
     const encryptionKey = "lakdsljkalkjlksdfkl";
     const algorithm = 'aes-256-ctr';
     const cipher = crypto.createCipher(algorithm, encryptionKey);
@@ -49,7 +54,7 @@ router.post('/subscribe-newsletter', function (request, response) {
                         users = JSON.parse(data);
                     }
                     // add new user
-                    users.push(user);
+                    users.push(userObj);
                     data = JSON.stringify(users);
                     // write all users
                     fs.writeFile(file, data, (err) => {
@@ -58,7 +63,7 @@ router.post('/subscribe-newsletter', function (request, response) {
                     });
                 });
             } else {
-                let users = []; users.push(user);
+                let users = []; users.push(userObj);
                 let data = JSON.stringify(users);
                 // write new users
                 fs.writeFile(file, data, (err) => {
@@ -98,7 +103,7 @@ router.post('/upload-image', function(request, response) {
         height: 400, 
         type: 'jpeg'
     }).then(response => {
-        // command injection example
+        // Command injection example
         exec('rm /tmp/upload/${request.body.name}');
         return response.sendStatus(200);
     }).catch(error => {

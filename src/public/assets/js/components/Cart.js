@@ -28,25 +28,27 @@ $.fn.Cart = function (options) {
                             image: response.image,
                             name: response.name,
                             price: price,
-                            total: Number(price * (product.quantity)).toFixed(2)
+                            total: parseFloat(price * (product.quantity)).toFixed(2)
 
                         };
                         _addProductRow(updatedProduct);
                         _updateTotals();
                     })
             });
-
             $('#item-table').on('input', function () {
                 const row = $(this).closest('tr');
                 const pid = row.attr('id');
-                alert($(this).val());
+                //alert($(this).val());
             });
 
             $('#item-table').on('click', 'button', function () {
                 const row = $(this).closest('tr');
                 const pid = row.attr('id');
                 if ($(this).hasClass("js-btn-minus")) {
-                    _subtractItemFromCart(pid, 1);
+                    let productQty = row.find("input.product-quantity").val().trim();
+                    if (productQty > 1) {
+                        _subtractItemFromCart(pid, 1);
+                    }    
                 } else if ($(this).hasClass("js-btn-plus")) {
                     _addItemToCart(pid, 1);
                 } else {
@@ -94,7 +96,7 @@ $.fn.Cart = function (options) {
             "<td class='product-name'>" +
             "<h2 class='h5 text-black'>" + product.name + "</h2>" +
             "</td>" +
-            "<td>&#164;<span class='product-price'>" + Number(product.price).toFixed(2) + "</span></td>" +
+            "<td>&#164;<span class='product-price'>" + parseFloat(product.price).toFixed(2) + "</span></td>" +
             "<td>" +
             "<div class='input-group mx-auto' style='max-width: 150px;'>" +
             "<div class='input-group-prepend'>" +
@@ -106,7 +108,7 @@ $.fn.Cart = function (options) {
             "</div>" +
             "</div>" +
             "</td>" +
-            "<td>&#164;<span class='product-total'>" + Number(product.total).toFixed(2) + "</span></td>" +
+            "<td>&#164;<span class='product-total'>" + parseFloat(product.total).toFixed(2) + "</span></td>" +
             "<td><a href='#' id='remove-product' class='btn btn-primary height-auto btn-sm'>X</a></td>" +
             "</tr>"
         )
@@ -118,11 +120,11 @@ $.fn.Cart = function (options) {
             let self = $(this);
             let productPrice = self.find("span.product-price").text().trim();
             let productQty = self.find("input.product-quantity").val().trim();
-            let productTotal = Number(productPrice * productQty).toFixed(2);
-            $('span.product-total').html(productTotal);
-            subTotal += productTotal;
+            let productTotal = parseFloat(productPrice * productQty).toFixed(2);
+            self.find("span.product-total").html(productTotal);
+            subTotal  = parseFloat(subTotal) + parseFloat(productTotal);
         })
-        let subTotalStr = "&#164;" + Number(subTotal).toFixed(2);
+        let subTotalStr = "&#164;" + parseFloat(subTotal).toFixed(2);
         $('#cart-subtotal').html(subTotalStr);
         $('#cart-total').html(subTotalStr);
     }

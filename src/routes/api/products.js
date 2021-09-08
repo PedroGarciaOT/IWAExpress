@@ -118,7 +118,9 @@ router.get('/', function (request, response) {
 
     // Example SQL Injection
     let sql = connection.format(
-        `SELECT BIN_TO_UUID(id) AS id, name, image, summary, price, rating, in_stock as inStock, on_sale as onSale, sale_price as salePrice FROM products WHERE name LIKE '%${keywords}%' LIMIT ${limit}`);
+        `SELECT BIN_TO_UUID(id) AS id, name, image, summary, price, rating, in_stock as inStock, on_sale as onSale, sale_price as salePrice 
+            FROM products WHERE name LIKE '%${keywords}%' LIMIT ${limit}`
+    );
     connection.query(sql, function (error, results, fields) {
         if (error) {
             return response.sendStatus(500)
@@ -158,7 +160,9 @@ router.get('/:id', function (request, response) {
     console.log(`INFO: Retrieving product with id: ${productId}`);
 
     let sql = connection.format(
-        `SELECT BIN_TO_UUID(id) AS id, name, image, summary, price, rating, in_stock as inStock, on_sale as onSale, sale_price as salePrice FROM products WHERE id = UUID_TO_BIN('${productId}')`);
+        `SELECT BIN_TO_UUID(id) AS id, name, image, summary, price, rating, in_stock as inStock, on_sale as onSale, sale_price as salePrice 
+            FROM products WHERE id = UUID_TO_BIN('${productId}')`
+    );
     connection.query(sql, function (error, results, fields) {
         if (error) {
             return response.sendStatus(500)

@@ -66,7 +66,7 @@ $.fn.CartAdd = function (options) {
     function _saveCart(cart) {
         const cartCount = cart.reduce(function (a, b) {
             return a + parseInt(b.quantity);
-        }, 0);;
+        }, 0);
         const parsed = JSON.stringify(cart);
         localStorage.setItem('cart', parsed);
         $(document).trigger("updateCartCount", [cartCount]);
