@@ -2,7 +2,7 @@
   "App": {
     "dbConfig": {
       "host": "db",
-      "port": 3306,
+      "port": 8836,
       "user": "iwa",
       "password": "iwa",
       "database": "iwa"

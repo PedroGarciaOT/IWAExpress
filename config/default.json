@@ -5,7 +5,7 @@
     "port":  3000,
     "dbConfig": {
       "host": "localhost",
-      "port": 3306,
+      "port": 8836,
       "user": "iwa",
       "password": "iwa",
       "database": "iwa"

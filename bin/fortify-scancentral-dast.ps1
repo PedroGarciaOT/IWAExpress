@@ -26,6 +26,9 @@ param (
     [switch]$Raw
 )
 begin {
+    # Remove any training slash from ApiUri
+    $ApiUri = $ApiUri.TrimEnd('/')
+
     # Fortify Security Token
     $FortifyToken = ""
 
@@ -62,7 +65,7 @@ process {
         $FortifyToken = $Response.token
         $Headers.Add('Authorization', $FortifyToken)
     } catch {
-        Write-Error -Exception $_.Exception -Message "eDAST API call failed: $_"
+        Write-Error -Exception $_.Exception -Message "scanCentral DAST API call failed: $_"
     }
 
     # Get possible scan status values
@@ -76,7 +79,7 @@ process {
         $Response = Invoke-RestMethod -Headers $Headers @Params
         $ScanStatusValues = $Response
     } catch {
-        Write-Error -Exception $_.Exception -Message "eDAST API call failed: $_"
+        Write-Error -Exception $_.Exception -Message "scanCentral DAST API call failed: $_"
     }
 
     # Start the scan
@@ -97,7 +100,7 @@ process {
         $ScanId = $Response.id
         Write-Host "Started scan id: $ScanId"
     } catch {
-        Write-Error -Exception $_.Exception -Message "eDAST API call failed: $_"
+        Write-Error -Exception $_.Exception -Message "scanCentral DAST API call failed: $_"
     }
 
     # Poll the scan
@@ -107,40 +110,23 @@ process {
         ErrorAction = 'Stop'
         Method = 'GET'
     }
-    $ScanResults = @{};
     do {
         Start-Sleep -s $PollingInterval # sleep for X seconds
         try  {
             $Response = Invoke-RestMethod -Headers $Headers @Params
             Write-Verbose $Response
-            $ScanResults = $Response.item
             $ScanStatusId = ($Response.item.scanStatusType) - 1
             $ScanStatus = $ScanStatusValues.Item($ScanStatusId).text
         } catch {
-            Write-Error -Exception $_.Exception -Message "eDAST API call failed: $_"
+            Write-Error -Exception $_.Exception -Message "scanCentral DAST API call failed: $_"
         }
         Write-Host "Scan id: '$ScanId' current status: $ScanStatus ($ScanStatusId)"
     } until ($ScanStatusId -in 4..6 -or $ScanStatusId -in 14..16)
-
-    // TODO: download FPR
 }
 end {
     if ($Raw) {
         $Response
     } else {
-        Write-Host "Results:"
-        Write-Host "Scan name: " $ScanResults.name
-        $dt = [datetime]::parseexact($ScanResults.startedDateTime, 'yyyy-MM-ddTHH:mm:ss.fffffff', $Null) 
-        Write-Host "Started: " $dt
-        $ts = [TImeSpan]::FromTicks($ScanResults.duration)
-        Write-Host "Duration: " $ts.hours "hrs" $ts.minutes "mins" $ts.seconds "secs"
-        Write-Host "Status: " $ScanStatus
-        Write-Host "Requests: " $ScanResults.requestCount
-        Write-Host "Failed Requests: " $ScanResults.failedRequestCount
-        Write-Host "KB Sent / KB Received: " $ScanResults.kilobytesSent "/" $ScanResults.kilobytesReceived
-        Write-Host "Critical: " $ScanResults.criticalCount
-        Write-Host "High: " $ScanResults.highCount
-        Write-Host "Medium: " $ScanResults.mediumCount
-        Write-Host "Low: " $ScanResults.lowCount
+        Write-Host "Scan id: $ScanId final status: $ScanStatus ($ScanStatusId)"
     }
 }

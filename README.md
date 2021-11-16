@@ -56,7 +56,7 @@ To develop the application you will need to have first installed [NodeJS](https:
 If you want to make changes to the application, you should first bring up the MySQL and Adminer containers using the following command:
 
 ```
-docker-compose up -d
+docker-compose --profile mysql up -d
 ```
 
 Next, install the required node modules locally using:

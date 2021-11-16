@@ -14,7 +14,7 @@ services:
       - iwa-net
     environment:
       - NODE_ENV=production
-      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS=db:8836
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30
@@ -24,12 +24,13 @@ services:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     ports:
-      - "3306:3306"
+      - "8836:3306"
     restart: always
     networks:
       - iwa-net
     environment:
       MYSQL_ROOT_PASSWORD: root
+    profiles: ["mysql"]
 
   adminer:
     image: adminer
@@ -40,6 +41,8 @@ services:
       - db
     networks:
       - iwa-net
+    profiles: ["mysql"]
+
 
   nginx-test:
     image: nginx:1.15-alpine
